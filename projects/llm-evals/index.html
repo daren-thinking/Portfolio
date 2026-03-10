@@ -724,14 +724,255 @@
     transition: all 0.15s;
   }
   .btn-reset:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ===== Language & Mobile Toggle ===== */
+  .toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .lang-toggle {
+    display: flex;
+    align-items: center;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    height: 28px;
+  }
+  .lang-toggle-btn {
+    padding: 0 10px;
+    height: 100%;
+    border: none;
+    background: transparent;
+    color: var(--text3);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .lang-toggle-btn.active {
+    background: var(--accent);
+    color: #fff;
+  }
+  .lang-toggle-btn:hover:not(.active) {
+    color: var(--text2);
+  }
+  .mobile-sidebar-toggle {
+    display: none;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface2);
+    color: var(--text2);
+    font-size: 16px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .mobile-sidebar-toggle:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .sidebar-close-btn {
+    display: none;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface2);
+    color: var(--text2);
+    font-size: 14px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+
+  /* ===== Mobile Responsive ===== */
+  @media (max-width: 768px) {
+    body {
+      flex-direction: column;
+      height: auto;
+      overflow: auto;
+    }
+
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 280px;
+      height: 100vh;
+      z-index: 1000;
+      transition: left 0.3s ease;
+      box-shadow: none;
+    }
+
+    #sidebar.open {
+      left: 0;
+      box-shadow: 4px 0 30px rgba(0,0,0,0.5);
+    }
+
+    .sidebar-close-btn {
+      display: flex;
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+    }
+
+    .sidebar-overlay.show {
+      display: block;
+    }
+
+    #main {
+      width: 100%;
+      height: auto;
+      min-height: 100vh;
+    }
+
+    .mobile-sidebar-toggle {
+      display: flex;
+    }
+
+    #content {
+      padding: 20px 16px;
+    }
+
+    .topbar {
+      padding: 10px 16px;
+    }
+
+    .stat-row {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .stat-card {
+      padding: 12px;
+    }
+
+    .stat-num {
+      font-size: 20px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+    }
+
+    .card-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .compare-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .page-title {
+      font-size: 20px;
+    }
+
+    .page-desc {
+      font-size: 13px;
+    }
+
+    .data-table {
+      font-size: 11px;
+      display: block;
+      overflow-x: auto;
+    }
+
+    .data-table th, .data-table td {
+      padding: 8px 10px;
+      white-space: nowrap;
+    }
+
+    .tabs {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .tab {
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .code-block {
+      font-size: 11px;
+      padding: 12px;
+    }
+
+    .quiz-option {
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+
+    /* Home page mobile adjustments */
+    #page-home h1 {
+      font-size: 22px !important;
+    }
+
+    #page-home > div:first-child p {
+      font-size: 13px !important;
+    }
+
+    #page-home [style*="grid-template-columns: 1fr 1fr;"],
+    #page-home [style*="grid-template-columns:1fr 1fr;"] {
+      grid-template-columns: 1fr !important;
+    }
+
+    #page-home [style*="grid-template-columns: 1fr 1fr 1fr;"],
+    #page-home [style*="grid-template-columns:1fr 1fr 1fr;"] {
+      grid-template-columns: 1fr !important;
+    }
+
+    #page-home [style*="grid-template-columns: 1fr 1fr;"] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .stat-row {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .breadcrumb {
+      font-size: 11px;
+      max-width: 120px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .action-btns .btn {
+      padding: 5px 10px;
+      font-size: 11px;
+    }
+  }
 </style>
 </head>
 <body>
 
 <!-- Sidebar -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 <nav id="sidebar">
+  <button class="sidebar-close-btn" onclick="closeSidebar()">✕</button>
   <div class="sidebar-header">
-    <a href="../../index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);text-decoration:none;margin-bottom:10px;transition:color .2s" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text3)'">← 返回作品集</a>
     <div class="sidebar-title">⚡ LLM Evals 知识平台</div>
     <div class="sidebar-sub">系统化掌握 AI 评估体系</div>
   </div>
@@ -820,8 +1061,15 @@
 <!-- Main -->
 <div id="main">
   <div class="topbar">
-    <div class="breadcrumb" id="breadcrumb">知识地图</div>
-    <div class="action-btns">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button class="mobile-sidebar-toggle" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+      <div class="breadcrumb" id="breadcrumb">知识地图</div>
+    </div>
+    <div class="toolbar-actions">
+      <div class="lang-toggle">
+        <button class="lang-toggle-btn active" onclick="switchLang('zh')">中</button>
+        <button class="lang-toggle-btn" onclick="switchLang('en')">EN</button>
+      </div>
       <button class="btn btn-outline" onclick="navPrev()">← 上一节</button>
       <button class="btn btn-primary" onclick="navNext()">下一节 →</button>
     </div>
@@ -831,24 +1079,95 @@
 
     <!-- HOME -->
     <div class="page active" id="page-home">
-      <div class="page-header">
-        <div class="page-tag tag-foundation">知识地图</div>
-        <div class="page-title">LLM Evals：AI 产品的质量飞轮</div>
-        <div class="page-desc">系统化构建 LLM 评估体系。本平台基于 Hamel Husain 帮助 30+ 公司落地 Eval 系统的第一手经验，从概念到实践逐层深入。</div>
+
+      <!-- ===== HERO: 价值主张 ===== -->
+      <div style="text-align:center;padding:8px 0 40px;">
+        <div style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:600;background:rgba(16,185,129,0.12);color:var(--green);letter-spacing:0.5px;margin-bottom:16px;">🔥 基于帮助 30+ 公司落地 Eval 的实战经验</div>
+        <h1 style="font-size:32px;font-weight:800;line-height:1.25;margin-bottom:14px;letter-spacing:-0.5px;">不会做 Eval 的 AI 团队，<br><span style="background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">永远在盲飞</span></h1>
+        <p style="font-size:15px;color:var(--text2);max-width:600px;margin:0 auto 24px;line-height:1.8;">你的模型上线了，用户说"不好用"——但你不知道哪里不好、有多不好、改了是否变好。<br>这个平台帮你<strong style="color:var(--text)">从零建立系统化的 LLM 评估能力</strong>，让每一次改动都有据可依。</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="showPage('what', document.querySelector('[onclick*=\"what\"]'))" style="padding:10px 24px;font-size:14px;">🚀 开始学习</button>
+          <button class="btn btn-outline" onclick="document.getElementById('skills-section').scrollIntoView({behavior:'smooth'})" style="padding:10px 24px;font-size:14px;">📋 我能学到什么？</button>
+        </div>
       </div>
 
+      <!-- ===== 你是否遇到这些问题？ ===== -->
+      <div class="section">
+        <div class="section-title">😫 你是否遇到这些问题？</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px;">
+          <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:10px;padding:16px 18px;">
+            <div style="font-size:14px;font-weight:600;color:var(--red);margin-bottom:6px;">❌ 模型上线后用户说"不好用"</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.7;">但你无法量化"不好用"到底是哪个环节、什么类型的问题，更无法追踪改进效果。</div>
+          </div>
+          <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:10px;padding:16px 18px;">
+            <div style="font-size:14px;font-weight:600;color:var(--red);margin-bottom:6px;">❌ 改了 Prompt 却不知道有没有变好</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.7;">每次调整都是"凭感觉"，缺乏 Pass/Fail 的客观判断机制，团队对改动效果各执一词。</div>
+          </div>
+          <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:10px;padding:16px 18px;">
+            <div style="font-size:14px;font-weight:600;color:var(--red);margin-bottom:6px;">❌ 用了通用 Benchmark 但对业务毫无指导</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.7;">MMLU/HumanEval 分数很高，但线上表现依然拉胯——通用指标和业务场景之间存在巨大鸿沟。</div>
+          </div>
+          <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:10px;padding:16px 18px;">
+            <div style="font-size:14px;font-weight:600;color:var(--red);margin-bottom:6px;">❌ 想用 LLM 自动评分但不知道能不能信</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.7;">LLM-as-Judge 看起来很美好，但没有人工标注做校准，自动评分系统可能在"自嗨"。</div>
+          </div>
+        </div>
+        <div class="callout callout-success" style="margin-top:16px;">
+          <div class="callout-title">✅ 这个平台解决的核心问题</div>
+          <p>帮助 AI 产品团队建立<strong>可量化、可迭代、可信赖</strong>的评估体系。不管你是 PM、算法工程师还是技术负责人，完成这套知识体系后，你将知道<strong>如何把"AI 好不好用"变成一个可测量的工程问题</strong>。</p>
+        </div>
+      </div>
+
+      <!-- ===== 学完你将掌握 ===== -->
+      <div class="section" id="skills-section">
+        <div class="section-title">🎯 学完你将掌握这些核心技能</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center;transition:all 0.2s;" onmouseenter="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseleave="this.style.borderColor='var(--border)';this.style.transform='none'">
+            <div style="font-size:28px;margin-bottom:10px;">🔬</div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text);">Error Analysis 方法论</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.6;">从 Trace 中系统发现真实失败模式，而不是猜测。每个 Eval 项目的起点。</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center;transition:all 0.2s;" onmouseenter="this.style.borderColor='var(--green)';this.style.transform='translateY(-2px)'" onmouseleave="this.style.borderColor='var(--border)';this.style.transform='none'">
+            <div style="font-size:28px;margin-bottom:10px;">📊</div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text);">三层评估体系设计</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.6;">Unit → Human+Model → A/B，知道什么时候用哪一层，如何搭建完整闭环。</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center;transition:all 0.2s;" onmouseenter="this.style.borderColor='var(--accent2)';this.style.transform='translateY(-2px)'" onmouseleave="this.style.borderColor='var(--border)';this.style.transform='none'">
+            <div style="font-size:28px;margin-bottom:10px;">🤖</div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text);">LLM-as-Judge 落地</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.6;">7 步 Critique Shadowing 方法，构建对齐人类判断的 LLM 自动评判系统。</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center;transition:all 0.2s;" onmouseenter="this.style.borderColor='var(--accent3)';this.style.transform='translateY(-2px)'" onmouseleave="this.style.borderColor='var(--border)';this.style.transform='none'">
+            <div style="font-size:28px;margin-bottom:10px;">✅</div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text);">Pass/Fail 评判设计</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.6;">为什么 1-5 分评分是反模式？如何设计清晰可操作的二元判断标准。</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center;transition:all 0.2s;" onmouseenter="this.style.borderColor='var(--yellow)';this.style.transform='translateY(-2px)'" onmouseleave="this.style.borderColor='var(--border)';this.style.transform='none'">
+            <div style="font-size:28px;margin-bottom:10px;">📦</div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text);">评估数据集构建</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.6;">从业务数据中系统构建 Golden Dataset，掌握采样策略、标注协议和质量控制。</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center;transition:all 0.2s;" onmouseenter="this.style.borderColor='var(--green)';this.style.transform='translateY(-2px)'" onmouseleave="this.style.borderColor='var(--border)';this.style.transform='none'">
+            <div style="font-size:28px;margin-bottom:10px;">🚀</div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text);">CI/CD 评估门</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.6;">将 Eval 嵌入发布流程，每次上线前自动跑评估，杜绝"盲发"带来的回归。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 数据亮点 ===== -->
       <div class="stat-row">
         <div class="stat-card">
           <div class="stat-num">60-80%</div>
           <div class="stat-label">顶尖团队投入 Eval 的开发时间占比</div>
         </div>
         <div class="stat-card">
-          <div class="stat-num">3</div>
-          <div class="stat-label">Eval 的核心层次（Unit / Human+Model / A/B）</div>
+          <div class="stat-num">13</div>
+          <div class="stat-label">深度知识章节，从入门到精通</div>
         </div>
         <div class="stat-card">
-          <div class="stat-num">100+</div>
-          <div class="stat-label">Error Analysis 至少需要阅读的 Trace 数量</div>
+          <div class="stat-num">30+</div>
+          <div class="stat-label">交互式 Quiz，边学边检测掌握度</div>
         </div>
         <div class="stat-card">
           <div class="stat-num">Pass/Fail</div>
@@ -856,8 +1175,73 @@
         </div>
       </div>
 
+      <!-- ===== 适合谁学？ ===== -->
       <div class="section">
-        <div class="section-title">知识体系结构</div>
+        <div class="section-title">👥 适合谁学？</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;">
+            <div style="font-size:20px;margin-bottom:8px;">🎯</div>
+            <div style="font-size:14px;font-weight:600;margin-bottom:6px;">AI 产品经理</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.6;">你是最重要的评估决策者——学会如何定义"好"、如何读评测报告、如何推动团队建立评估文化。</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;">
+            <div style="font-size:20px;margin-bottom:8px;">⚙️</div>
+            <div style="font-size:14px;font-weight:600;margin-bottom:6px;">算法 / AI 工程师</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.6;">从"跑通了就上线"到"跑得好才上线"——掌握 Eval Pipeline 搭建、Judge 校准、CI/CD 集成。</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;">
+            <div style="font-size:20px;margin-bottom:8px;">📋</div>
+            <div style="font-size:14px;font-weight:600;margin-bottom:6px;">技术负责人 / TL</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.6;">了解评估体系的全景架构，制定团队级的 Eval 规范，让质量成为团队基因。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 学习路径 ===== -->
+      <div class="section">
+        <div class="section-title">🗺️ 推荐学习路径</div>
+        <div class="steps">
+          <div class="step" onclick="showPage('what', document.querySelector('[onclick*=\"what\"]'))" style="cursor:pointer;">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">基础概念 <span class="badge badge-level1">入门</span></div>
+              <div class="step-desc">Eval 是什么、为什么必须做、Trace 的定义。15 分钟建立正确心智模型。</div>
+            </div>
+          </div>
+          <div class="step" onclick="showPage('error', document.querySelector('[onclick*=\"error\"]'))" style="cursor:pointer;">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Error Analysis <span class="badge badge-level2">核心 ★★★</span></div>
+              <div class="step-desc">整个体系的灵魂——人工读 100+ Trace，从数据中发现真实的失败模式。所有后续步骤都以此为起点。</div>
+            </div>
+          </div>
+          <div class="step" onclick="showPage('three-levels', document.querySelector('[onclick*=\"three-levels\"]'))" style="cursor:pointer;">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">三层体系 + Pass/Fail <span class="badge badge-level2">核心</span></div>
+              <div class="step-desc">搭建 Unit / Human+Model / A/B 三层评估架构。理解为什么 Pass/Fail 优于 1-5 分。</div>
+            </div>
+          </div>
+          <div class="step" onclick="showPage('judge', document.querySelector('[onclick*=\"judge\"]'))" style="cursor:pointer;">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <div class="step-title">LLM-as-Judge <span class="badge badge-level2">进阶</span></div>
+              <div class="step-desc">7 步 Critique Shadowing 方法论，构建可信赖的自动评判系统。必须先有人工标注基础。</div>
+            </div>
+          </div>
+          <div class="step" onclick="showPage('production', document.querySelector('[onclick*=\"production\"]'))" style="cursor:pointer;">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              <div class="step-title">生产环境与 CI/CD <span class="badge badge-level3">实战</span></div>
+              <div class="step-desc">把 Eval 嵌入发布流程和线上监控，每次改动都有客观数据作为 Go/No-Go 的依据。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 知识体系全景 ===== -->
+      <div class="section">
+        <div class="section-title">📚 知识体系全景</div>
         <div class="card-grid">
           <div class="card" onclick="showPage('what', document.querySelector('[onclick*=\"what\"]'))">
             <div class="card-icon">🔍</div>
@@ -897,10 +1281,27 @@
         <p>大多数 AI 产品失败的根本原因不是模型不够好，而是缺乏健壮的评估系统。没有 Eval，你无法知道改动是否有效，无法系统地改进，无法调试，也无法做精调。Eval 是 AI 产品迭代速度的核心基础设施。</p>
       </div>
 
-      <div class="callout callout-warning">
-        <div class="callout-title">⚠️ 建议学习路径</div>
-        <p>建议按左侧导航顺序阅读：基础概念 → Error Analysis → 三层体系 → Pass/Fail → LLM-as-Judge → 生产监控 → 常见错误。每节都有独立价值，但有前后依赖关系。</p>
+      <!-- ===== 知识来源 ===== -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:24px;">
+        <div style="font-size:14px;font-weight:700;margin-bottom:14px;">📖 知识来源</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="font-size:24px;flex-shrink:0;">📝</div>
+            <div>
+              <div style="font-size:13px;font-weight:600;margin-bottom:3px;"><a href="https://hamel.dev/blog/posts/evals-faq" target="_blank" style="color:var(--accent);text-decoration:none;">Your AI Product Needs Evals</a></div>
+              <div style="font-size:11px;color:var(--text3);line-height:1.6;">Hamel Husain 的深度 FAQ 博客，回答了 Eval 最常被问到的 20+ 个核心问题。</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="font-size:24px;flex-shrink:0;">🎓</div>
+            <div>
+              <div style="font-size:13px;font-weight:600;margin-bottom:3px;"><a href="https://maven.com/parlance-labs/evals" target="_blank" style="color:var(--accent);text-decoration:none;">Parlance Labs Eval 课程</a></div>
+              <div style="font-size:11px;color:var(--text3);line-height:1.6;">帮助 30+ 公司落地 Eval 的付费课程。本平台基于其核心方法论进行深度提炼与知识重组。</div>
+            </div>
+          </div>
+        </div>
       </div>
+
     </div>
 
     <!-- WHAT IS EVAL -->
@@ -3505,6 +3906,9 @@ You are a [领域] 质量评估专家，负责判断 AI 的回答是否达到预
 
     // Scroll to top
     document.getElementById('content').scrollTop = 0;
+
+    // Close mobile sidebar
+    closeSidebar();
   }
 
   function navNext() {
@@ -3616,7 +4020,67 @@ You are a [领域] 质量评估专家，负责判断 AI 的回答是否达到预
     ['what','why','trace','error','three-levels','passfail','expert','judge','dataset','rag','production','mistakes','pm','faq','course'].forEach(id => {
       initQuiz('quiz-' + id);
     });
+    // Init language from localStorage
+    const savedLang = localStorage.getItem('evals-lang') || 'zh';
+    if (savedLang !== 'zh') switchLang(savedLang);
   });
+
+  // ===== Mobile Sidebar =====
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('show');
+    document.body.style.overflow = document.getElementById('sidebar').classList.contains('open') ? 'hidden' : '';
+  }
+
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  // Close sidebar on resize to desktop
+  window.addEventListener('resize', function() {
+    if (window.innerWidth > 768) closeSidebar();
+  });
+
+  // ===== Language Switching =====
+  let currentLang = 'zh';
+
+  const i18nEvals = {
+    zh: {
+      sidebarTitle: '⚡ LLM Evals 知识平台',
+      sidebarSub: '系统化掌握 AI 评估体系',
+      progressLabel: '学习进度',
+    },
+    en: {
+      sidebarTitle: '⚡ LLM Evals Hub',
+      sidebarSub: 'Master AI Evaluation Systematically',
+      progressLabel: 'Progress',
+    }
+  };
+
+  function switchLang(lang) {
+    currentLang = lang;
+    localStorage.setItem('evals-lang', lang);
+
+    // Update lang toggle buttons
+    document.querySelectorAll('.lang-toggle-btn').forEach(btn => {
+      const isZh = btn.textContent.trim() === '中';
+      const isEn = btn.textContent.trim() === 'EN';
+      btn.classList.toggle('active', (isZh && lang === 'zh') || (isEn && lang === 'en'));
+    });
+
+    // Update sidebar header
+    const texts = i18nEvals[lang];
+    const sidebarTitle = document.querySelector('.sidebar-title');
+    const sidebarSub = document.querySelector('.sidebar-sub');
+    if (sidebarTitle) sidebarTitle.textContent = texts.sidebarTitle;
+    if (sidebarSub) sidebarSub.textContent = texts.sidebarSub;
+
+    // Update progress label
+    const progressLabelEl = document.querySelector('.progress-label span:first-child');
+    if (progressLabelEl) progressLabelEl.textContent = texts.progressLabel;
+  }
 </script>
 
 </body>

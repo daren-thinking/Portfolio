@@ -2,8 +2,9 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 <title>Daren Thinking — AI Product & Eval Portfolio</title>
+<meta name="description" content="AI Product & Eval Portfolio - 专注 LLM 评估体系、模型策略与 AI 应用质量工程">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -39,11 +40,30 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;
 nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:rgba(10,10,15,.75);border-bottom:1px solid rgba(42,42,66,.5);transition:all .3s}
 nav .container{display:flex;align-items:center;justify-content:space-between;height:64px}
 .nav-logo{font-size:18px;font-weight:700;letter-spacing:-.5px;background:linear-gradient(135deg,var(--accent),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.nav-links{display:flex;gap:32px;align-items:center}
+.nav-right{display:flex;gap:24px;align-items:center}
+.nav-links{display:flex;gap:28px;align-items:center}
 .nav-links a{color:var(--text2);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s;position:relative}
 .nav-links a:hover{color:var(--text)}
 .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--accent);transition:width .3s}
 .nav-links a:hover::after{width:100%}
+
+/* Language switcher */
+.lang-switch{display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;height:34px;flex-shrink:0}
+.lang-btn{padding:0 12px;height:100%;border:none;background:transparent;color:var(--text3);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;letter-spacing:.5px}
+.lang-btn.active{background:var(--accent);color:#fff}
+.lang-btn:hover:not(.active){color:var(--text2);background:var(--surface2)}
+
+/* Mobile menu button */
+.mobile-menu-btn{display:none;width:36px;height:36px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text2);font-size:18px;cursor:pointer;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.mobile-menu-btn:hover{border-color:var(--accent);color:var(--text)}
+
+/* Mobile menu overlay */
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;bottom:0;background:rgba(10,10,15,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:99;padding:32px 24px;flex-direction:column;gap:8px}
+.mobile-menu.open{display:flex}
+.mobile-menu a{color:var(--text2);text-decoration:none;font-size:18px;font-weight:500;padding:16px 0;border-bottom:1px solid var(--border);transition:color .2s}
+.mobile-menu a:hover,.mobile-menu a:active{color:var(--accent)}
+.mobile-menu .lang-switch{margin-top:16px;align-self:flex-start;height:40px}
+.mobile-menu .lang-btn{font-size:14px;padding:0 16px}
 
 /* ===== HERO ===== */
 .hero{min-height:100vh;display:flex;align-items:center;padding-top:64px}
@@ -51,10 +71,10 @@ nav .container{display:flex;align-items:center;justify-content:space-between;hei
 .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:var(--accent-soft);border:1px solid rgba(99,102,241,.2);border-radius:100px;font-size:12px;font-weight:600;color:var(--accent);margin-bottom:24px;letter-spacing:.5px}
 .hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.hero h1{font-size:clamp(40px,6vw,64px);font-weight:800;line-height:1.1;margin-bottom:20px;letter-spacing:-1.5px}
+.hero h1{font-size:clamp(36px,6vw,64px);font-weight:800;line-height:1.1;margin-bottom:20px;letter-spacing:-1.5px}
 .hero h1 .gradient{background:linear-gradient(135deg,var(--accent) 0%,var(--cyan) 50%,var(--pink) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% auto;animation:gradient-shift 6s ease infinite}
 @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-.hero-desc{font-size:18px;color:var(--text2);line-height:1.8;margin-bottom:36px;max-width:600px}
+.hero-desc{font-size:clamp(15px,2.5vw,18px);color:var(--text2);line-height:1.8;margin-bottom:36px;max-width:600px}
 .hero-actions{display:flex;gap:16px;flex-wrap:wrap}
 .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:600;border:none;cursor:pointer;transition:all .25s;text-decoration:none;font-family:inherit}
 .btn-primary{background:linear-gradient(135deg,var(--accent),#4f46e5);color:#fff;box-shadow:0 4px 24px var(--accent-glow)}
@@ -75,11 +95,11 @@ nav .container{display:flex;align-items:center;justify-content:space-between;hei
 .section-tag.purple{background:var(--accent-soft);color:var(--accent)}
 .section-tag.green{background:var(--green-soft);color:var(--green)}
 .section-tag.cyan{background:var(--cyan-soft);color:var(--cyan)}
-.section-title{font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-1px;margin-bottom:12px}
-.section-desc{font-size:16px;color:var(--text2);max-width:600px;margin:0 auto;line-height:1.7}
+.section-title{font-size:clamp(24px,4vw,40px);font-weight:800;letter-spacing:-1px;margin-bottom:12px}
+.section-desc{font-size:clamp(14px,2vw,16px);color:var(--text2);max-width:600px;margin:0 auto;line-height:1.7}
 
 /* ===== PROJECTS ===== */
-#projects{padding:100px 0}
+#projects{padding:80px 0}
 .project-grid{display:grid;gap:24px}
 .project-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:all .35s;position:relative}
 .project-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,.3)}
@@ -87,7 +107,7 @@ nav .container{display:flex;align-items:center;justify-content:space-between;hei
 .project-preview{position:relative;overflow:hidden;background:var(--bg2)}
 .project-preview img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
 .project-card:hover .project-preview img{transform:scale(1.05)}
-.project-preview-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--surface2),var(--bg2));position:relative}
+.project-preview-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--surface2),var(--bg2));position:relative;min-height:240px}
 .preview-mockup{width:85%;max-width:360px;aspect-ratio:16/10;background:var(--bg);border-radius:8px;border:1px solid var(--border);overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.3)}
 .mockup-bar{height:28px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 10px;gap:6px}
 .mockup-dot{width:8px;height:8px;border-radius:50%}
@@ -97,11 +117,11 @@ nav .container{display:flex;align-items:center;justify-content:space-between;hei
 .mockup-line.w60{width:60%}.mockup-line.w80{width:80%}.mockup-line.w45{width:45%}.mockup-line.w70{width:70%}
 .mockup-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px}
 .mockup-box{height:40px;border-radius:4px;background:var(--surface2);border:1px solid var(--border)}
-.project-info{padding:40px;display:flex;flex-direction:column;justify-content:center}
+.project-info{padding:36px;display:flex;flex-direction:column;justify-content:center}
 .project-status{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
 .project-status.live{color:var(--green)}.project-status.wip{color:var(--amber)}
 .project-status .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
-.project-name{font-size:24px;font-weight:700;margin-bottom:10px;letter-spacing:-.5px}
+.project-name{font-size:clamp(20px,3vw,24px);font-weight:700;margin-bottom:10px;letter-spacing:-.5px}
 .project-desc{font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:20px}
 .project-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
 .tag{padding:4px 12px;border-radius:100px;font-size:11px;font-weight:600;border:1px solid}
@@ -123,7 +143,7 @@ nav .container{display:flex;align-items:center;justify-content:space-between;hei
 .coming-soon p{font-size:14px;color:var(--text3);max-width:400px;margin:0 auto}
 
 /* ===== ABOUT ===== */
-#about{padding:100px 0}
+#about{padding:80px 0}
 .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
 .about-content h3{font-size:20px;font-weight:700;margin-bottom:16px}
 .about-content p{font-size:15px;color:var(--text2);line-height:1.8;margin-bottom:16px}
@@ -144,25 +164,52 @@ footer p{font-size:13px;color:var(--text3)}
 footer a{color:var(--accent);text-decoration:none}
 
 /* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  .project-card-inner{grid-template-columns:1fr}
+  .about-grid{grid-template-columns:1fr}
+}
 @media(max-width:768px){
   .container{padding:0 20px}
   .stats{grid-template-columns:repeat(2,1fr)}
-  .project-card-inner{grid-template-columns:1fr}
-  .project-preview-placeholder{min-height:200px}
-  .about-grid{grid-template-columns:1fr}
-  .nav-links{gap:20px}
-  .nav-links a{font-size:13px}
+  .stat{padding:24px 16px}
+  .stat-num{font-size:28px}
+  .nav-links{display:none}
+  .nav-right .lang-switch{display:none}
+  .mobile-menu-btn{display:flex}
+  .hero{min-height:auto;padding-top:100px;padding-bottom:60px}
   .hero-actions{flex-direction:column}
-  .btn{justify-content:center}
+  .btn{justify-content:center;padding:14px 24px}
+  .project-info{padding:28px 24px}
+  .coming-soon{padding:40px 24px}
+  #projects,#about{padding:60px 0}
+  .focus-card{padding:16px}
+  .focus-card:hover{transform:none}
+  .project-card:hover{transform:none}
 }
 @media(max-width:480px){
-  .stats{grid-template-columns:1fr}
-  .nav-links{display:none}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .stat{padding:20px 12px}
+  .stat-num{font-size:24px}
+  .stat-label{font-size:11px}
+  .hero h1{letter-spacing:-1px}
+}
+
+/* Touch friendly */
+@media(hover:none){
+  .project-card:hover{transform:none;box-shadow:none}
+  .focus-card:hover{transform:none}
+  .btn-primary:hover{transform:none}
 }
 
 /* Scroll reveal */
 .reveal{opacity:0;transform:translateY(30px);transition:all .6s cubic-bezier(.16,1,.3,1)}
 .reveal.visible{opacity:1;transform:translateY(0)}
+
+/* Safe area for notch devices */
+@supports(padding:max(0px)){
+  nav .container{padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right))}
+  .mobile-menu{padding-left:max(24px,env(safe-area-inset-left));padding-right:max(24px,env(safe-area-inset-right));padding-bottom:max(32px,env(safe-area-inset-bottom))}
+}
 </style>
 </head>
 <body>
@@ -174,23 +221,41 @@ footer a{color:var(--accent);text-decoration:none}
 <nav>
   <div class="container">
     <div class="nav-logo">Daren Thinking</div>
-    <div class="nav-links">
-      <a href="#projects">作品</a>
-      <a href="#about">关于</a>
-      <a href="https://github.com/daren-thinking" target="_blank">GitHub</a>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="#projects" data-i18n="nav_projects">作品</a>
+        <a href="#about" data-i18n="nav_about">关于</a>
+        <a href="https://github.com/daren-thinking" target="_blank">GitHub</a>
+      </div>
+      <div class="lang-switch">
+        <button class="lang-btn active" onclick="switchLang('zh')">中文</button>
+        <button class="lang-btn" onclick="switchLang('en')">EN</button>
+      </div>
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">☰</button>
     </div>
   </div>
 </nav>
 
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#projects" onclick="closeMobileMenu()" data-i18n="nav_projects">作品</a>
+  <a href="#about" onclick="closeMobileMenu()" data-i18n="nav_about">关于</a>
+  <a href="https://github.com/daren-thinking" target="_blank" onclick="closeMobileMenu()">GitHub</a>
+  <div class="lang-switch">
+    <button class="lang-btn active" onclick="switchLang('zh')">中文</button>
+    <button class="lang-btn" onclick="switchLang('en')">EN</button>
+  </div>
+</div>
+
 <section class="hero">
   <div class="container">
     <div class="hero-content">
-      <div class="hero-badge"><span class="dot"></span> Open for Collaboration</div>
-      <h1>构建 <span class="gradient">AI 产品质量</span>的基础设施</h1>
-      <p class="hero-desc">专注于 LLM 评估体系、模型策略产品与 AI 应用质量工程。用系统化的方法让 AI 产品从"能用"到"好用"。</p>
+      <div class="hero-badge"><span class="dot"></span> <span data-i18n="hero_badge">Open for Collaboration</span></div>
+      <h1 data-i18n-html="hero_title">构建 <span class="gradient">AI 产品质量</span>的基础设施</h1>
+      <p class="hero-desc" data-i18n="hero_desc">专注于 LLM 评估体系、模型策略产品与 AI 应用质量工程。用系统化的方法让 AI 产品从"能用"到"好用"。</p>
       <div class="hero-actions">
-        <a href="#projects" class="btn btn-primary">查看作品 ↓</a>
-        <a href="#about" class="btn btn-ghost">了解更多</a>
+        <a href="#projects" class="btn btn-primary" data-i18n="hero_cta">查看作品 ↓</a>
+        <a href="#about" class="btn btn-ghost" data-i18n="hero_cta2">了解更多</a>
       </div>
     </div>
   </div>
@@ -198,10 +263,10 @@ footer a{color:var(--accent);text-decoration:none}
 
 <div class="container">
   <div class="stats reveal">
-    <div class="stat"><div class="stat-num c1" data-target="22">0</div><div class="stat-label">深度知识章节</div></div>
-    <div class="stat"><div class="stat-num c2" data-target="6">0</div><div class="stat-label">核心方法论体系</div></div>
-    <div class="stat"><div class="stat-num c3" data-target="30">0</div><div class="stat-label">Quiz 交互检测</div></div>
-    <div class="stat"><div class="stat-num c4" data-target="1">0</div><div class="stat-label">公开作品项目</div></div>
+    <div class="stat"><div class="stat-num c1" data-target="22">0</div><div class="stat-label" data-i18n="stat_1">深度知识章节</div></div>
+    <div class="stat"><div class="stat-num c2" data-target="6">0</div><div class="stat-label" data-i18n="stat_2">核心方法论体系</div></div>
+    <div class="stat"><div class="stat-num c3" data-target="30">0</div><div class="stat-label" data-i18n="stat_3">Quiz 交互检测</div></div>
+    <div class="stat"><div class="stat-num c4" data-target="1">0</div><div class="stat-label" data-i18n="stat_4">公开作品项目</div></div>
   </div>
 </div>
 
@@ -209,8 +274,8 @@ footer a{color:var(--accent);text-decoration:none}
   <div class="container">
     <div class="section-header reveal">
       <div class="section-tag purple">Projects</div>
-      <div class="section-title">作品展示</div>
-      <div class="section-desc">专注 AI 产品评估与质量工程领域，持续输出可落地的工具与知识体系</div>
+      <div class="section-title" data-i18n="projects_title">作品展示</div>
+      <div class="section-desc" data-i18n="projects_desc">专注 AI 产品评估与质量工程领域，持续输出可落地的工具与知识体系</div>
     </div>
 
     <div class="project-grid">
@@ -239,8 +304,8 @@ footer a{color:var(--accent);text-decoration:none}
           </div>
           <div class="project-info">
             <div class="project-status live"><span class="dot"></span> LIVE</div>
-            <div class="project-name">LLM Evals 知识平台</div>
-            <div class="project-desc">从入门到精通的 LLM 评估知识体系。22 个深度章节，覆盖 Error Analysis、LLM-as-Judge、CI/CD 评估门等完整方法论，附带 30+ 交互式 Quiz。基于 Hamel Husain（Parlance Labs）帮助 30+ 公司落地 Eval 的第一手经验深度提炼。</div>
+            <div class="project-name" data-i18n="p1_name">LLM Evals 知识平台</div>
+            <div class="project-desc" data-i18n="p1_desc">你的模型上线了，用户说"不好用"——但你不知道哪里不好、改了是否变好。这个平台帮你从零建立系统化的 LLM 评估能力。13 个深度章节，覆盖 Error Analysis、LLM-as-Judge、CI/CD 评估门等核心方法论，附带 30+ 交互式 Quiz，让每一次改动都有据可依。</div>
             <div class="project-tags">
               <span class="tag t-eval">Evaluation</span>
               <span class="tag t-llm">LLM</span>
@@ -248,7 +313,7 @@ footer a{color:var(--accent);text-decoration:none}
               <span class="tag t-interactive">Interactive</span>
             </div>
             <a href="projects/llm-evals/index.html" class="project-link">
-              进入体验
+              <span data-i18n="p1_link">进入体验</span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
           </div>
@@ -258,8 +323,8 @@ footer a{color:var(--accent);text-decoration:none}
       <!-- Coming Soon -->
       <div class="coming-soon reveal">
         <div class="coming-soon-icon">🚀</div>
-        <h3>更多作品即将上线</h3>
-        <p>TABench 评测框架、AI 产品质量分析工具、模型策略分析报告……持续更新中</p>
+        <h3 data-i18n="coming_title">更多作品即将上线</h3>
+        <p data-i18n="coming_desc">TABench 评测框架、AI 产品质量分析工具、模型策略分析报告……持续更新中</p>
       </div>
     </div>
   </div>
@@ -269,13 +334,13 @@ footer a{color:var(--accent);text-decoration:none}
   <div class="container">
     <div class="section-header reveal">
       <div class="section-tag green">About</div>
-      <div class="section-title">关于我</div>
+      <div class="section-title" data-i18n="about_title">关于我</div>
     </div>
     <div class="about-grid reveal">
       <div class="about-content">
-        <h3>AI 产品 × 评估工程</h3>
-        <p>专注于大模型产品的质量工程与评估体系建设。相信好的 AI 产品不是"调出来的"，而是"评出来的"——系统化的评估是 AI 产品从 Demo 走向生产级的关键基础设施。</p>
-        <p>关注领域：LLM Evaluation、Error Analysis 方法论、模型策略产品、AI 应用可观测性、Benchmark 设计。</p>
+        <h3 data-i18n="about_h3">AI 产品 × 评估工程</h3>
+        <p data-i18n="about_p1">专注于大模型产品的质量工程与评估体系建设。相信好的 AI 产品不是"调出来的"，而是"评出来的"——系统化的评估是 AI 产品从 Demo 走向生产级的关键基础设施。</p>
+        <p data-i18n="about_p2">关注领域：LLM Evaluation、Error Analysis 方法论、模型策略产品、AI 应用可观测性、Benchmark 设计。</p>
         <div class="skill-tags">
           <span class="skill-tag">LLM Evaluation</span>
           <span class="skill-tag">Product Strategy</span>
@@ -286,10 +351,10 @@ footer a{color:var(--accent);text-decoration:none}
         </div>
       </div>
       <div class="about-visual">
-        <div class="focus-card"><div class="focus-icon f1">🎯</div><div><div class="focus-title">评估体系建设</div><div class="focus-desc">从 Error Analysis 到 LLM-as-Judge 的完整方法论</div></div></div>
-        <div class="focus-card"><div class="focus-icon f2">📊</div><div><div class="focus-title">Benchmark 设计</div><div class="focus-desc">面向真实业务场景的评测基准设计与实施</div></div></div>
-        <div class="focus-card"><div class="focus-icon f3">🔬</div><div><div class="focus-title">模型策略分析</div><div class="focus-desc">帮助产品团队做出数据驱动的模型决策</div></div></div>
-        <div class="focus-card"><div class="focus-icon f4">🛠️</div><div><div class="focus-title">质量工程工具</div><div class="focus-desc">构建降低评估摩擦的产品化工具</div></div></div>
+        <div class="focus-card"><div class="focus-icon f1">🎯</div><div><div class="focus-title" data-i18n="focus_1t">评估体系建设</div><div class="focus-desc" data-i18n="focus_1d">从 Error Analysis 到 LLM-as-Judge 的完整方法论</div></div></div>
+        <div class="focus-card"><div class="focus-icon f2">📊</div><div><div class="focus-title" data-i18n="focus_2t">Benchmark 设计</div><div class="focus-desc" data-i18n="focus_2d">面向真实业务场景的评测基准设计与实施</div></div></div>
+        <div class="focus-card"><div class="focus-icon f3">🔬</div><div><div class="focus-title" data-i18n="focus_3t">模型策略分析</div><div class="focus-desc" data-i18n="focus_3d">帮助产品团队做出数据驱动的模型决策</div></div></div>
+        <div class="focus-card"><div class="focus-icon f4">🛠️</div><div><div class="focus-title" data-i18n="focus_4t">质量工程工具</div><div class="focus-desc" data-i18n="focus_4d">构建降低评估摩擦的产品化工具</div></div></div>
       </div>
     </div>
   </div>
@@ -302,13 +367,100 @@ footer a{color:var(--accent);text-decoration:none}
 </footer>
 
 <script>
-// Scroll reveal
+// ===== i18n =====
+const i18n = {
+  zh: {
+    nav_projects: '作品', nav_about: '关于',
+    hero_badge: 'Open for Collaboration',
+    hero_title: '构建 <span class="gradient">AI 产品质量</span>的基础设施',
+    hero_desc: '专注于 LLM 评估体系、模型策略产品与 AI 应用质量工程。用系统化的方法让 AI 产品从"能用"到"好用"。',
+    hero_cta: '查看作品 ↓', hero_cta2: '了解更多',
+    stat_1: '深度知识章节', stat_2: '核心方法论体系', stat_3: 'Quiz 交互检测', stat_4: '公开作品项目',
+    projects_title: '作品展示', projects_desc: '专注 AI 产品评估与质量工程领域，持续输出可落地的工具与知识体系',
+    p1_name: 'LLM Evals 知识平台',
+    p1_desc: '你的模型上线了，用户说"不好用"——但你不知道哪里不好、改了是否变好。这个平台帮你从零建立系统化的 LLM 评估能力。13 个深度章节，覆盖 Error Analysis、LLM-as-Judge、CI/CD 评估门等核心方法论，附带 30+ 交互式 Quiz，让每一次改动都有据可依。',
+    p1_link: '进入体验',
+    coming_title: '更多作品即将上线', coming_desc: 'TABench 评测框架、AI 产品质量分析工具、模型策略分析报告……持续更新中',
+    about_title: '关于我', about_h3: 'AI 产品 × 评估工程',
+    about_p1: '专注于大模型产品的质量工程与评估体系建设。相信好的 AI 产品不是"调出来的"，而是"评出来的"——系统化的评估是 AI 产品从 Demo 走向生产级的关键基础设施。',
+    about_p2: '关注领域：LLM Evaluation、Error Analysis 方法论、模型策略产品、AI 应用可观测性、Benchmark 设计。',
+    focus_1t: '评估体系建设', focus_1d: '从 Error Analysis 到 LLM-as-Judge 的完整方法论',
+    focus_2t: 'Benchmark 设计', focus_2d: '面向真实业务场景的评测基准设计与实施',
+    focus_3t: '模型策略分析', focus_3d: '帮助产品团队做出数据驱动的模型决策',
+    focus_4t: '质量工程工具', focus_4d: '构建降低评估摩擦的产品化工具',
+  },
+  en: {
+    nav_projects: 'Projects', nav_about: 'About',
+    hero_badge: 'Open for Collaboration',
+    hero_title: 'Building Infrastructure for <span class="gradient">AI Product Quality</span>',
+    hero_desc: 'Focused on LLM evaluation systems, model strategy products, and AI application quality engineering. Transforming AI products from "working" to "excellent" through systematic evaluation.',
+    hero_cta: 'View Projects ↓', hero_cta2: 'Learn More',
+    stat_1: 'In-depth Chapters', stat_2: 'Core Methodologies', stat_3: 'Interactive Quizzes', stat_4: 'Public Projects',
+    projects_title: 'Projects', projects_desc: 'Focused on AI product evaluation and quality engineering, delivering practical tools and knowledge systems',
+    p1_name: 'LLM Evals Knowledge Hub',
+    p1_desc: 'Your model is live but users say "it\'s not good" — yet you can\'t tell what\'s wrong or if your changes helped. This platform helps you build systematic LLM evaluation capabilities from scratch. 13 in-depth chapters covering Error Analysis, LLM-as-Judge, CI/CD Eval Gates, with 30+ interactive quizzes. Make every iteration evidence-based.',
+    p1_link: 'Explore',
+    coming_title: 'More Projects Coming Soon', coming_desc: 'TABench evaluation framework, AI product quality analysis tools, model strategy reports... Stay tuned',
+    about_title: 'About Me', about_h3: 'AI Product × Evaluation Engineering',
+    about_p1: 'Focused on quality engineering and evaluation system building for LLM-powered products. I believe great AI products are not "tuned into existence" but "evaluated into excellence" — systematic evaluation is the critical infrastructure for taking AI products from demo to production-grade.',
+    about_p2: 'Areas of focus: LLM Evaluation, Error Analysis Methodology, Model Strategy Product, AI Application Observability, Benchmark Design.',
+    focus_1t: 'Evaluation Systems', focus_1d: 'Complete methodology from Error Analysis to LLM-as-Judge',
+    focus_2t: 'Benchmark Design', focus_2d: 'Business-oriented evaluation benchmark design and implementation',
+    focus_3t: 'Model Strategy', focus_3d: 'Helping product teams make data-driven model decisions',
+    focus_4t: 'Quality Tools', focus_4d: 'Building productized tools to reduce evaluation friction',
+  }
+};
+
+let currentLang = localStorage.getItem('portfolio-lang') || 'zh';
+
+function switchLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('portfolio-lang', lang);
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+
+  // Update all lang buttons across desktop & mobile
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', (btn.textContent.trim() === '中文' && lang === 'zh') || (btn.textContent.trim() === 'EN' && lang === 'en'));
+  });
+
+  const texts = i18n[lang];
+  // data-i18n: plain text
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (texts[key] !== undefined) el.textContent = texts[key];
+  });
+  // data-i18n-html: HTML content (for gradient spans etc)
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const key = el.getAttribute('data-i18n-html');
+    if (texts[key] !== undefined) el.innerHTML = texts[key];
+  });
+}
+
+// ===== Mobile Menu =====
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  const btn = document.querySelector('.mobile-menu-btn');
+  const isOpen = menu.classList.toggle('open');
+  btn.textContent = isOpen ? '✕' : '☰';
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+}
+function closeMobileMenu() {
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.querySelector('.mobile-menu-btn').textContent = '☰';
+  document.body.style.overflow = '';
+}
+
+// Close menu on resize to desktop
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 768) closeMobileMenu();
+});
+
+// ===== Scroll Reveal =====
 const revealEls = document.querySelectorAll('.reveal');
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       entry.target.classList.add('visible');
-      // Animate numbers
       entry.target.querySelectorAll('[data-target]').forEach(el => {
         const target = parseInt(el.dataset.target);
         let current = 0;
@@ -328,6 +480,9 @@ revealEls.forEach(el => revealObserver.observe(el));
 window.addEventListener('scroll', () => {
   document.querySelector('nav').style.boxShadow = window.scrollY > 10 ? '0 4px 30px rgba(0,0,0,.3)' : 'none';
 });
+
+// Init language on load
+document.addEventListener('DOMContentLoaded', () => switchLang(currentLang));
 </script>
 </body>
 </html>
