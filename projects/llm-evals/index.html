@@ -1,0 +1,3623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Evals 知识平台</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #222535;
+    --border: #2e3148;
+    --accent: #6366f1;
+    --accent2: #8b5cf6;
+    --accent3: #06b6d4;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+  }
+
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Sidebar */
+  #sidebar {
+    width: 280px;
+    min-width: 280px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .sidebar-header {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.3px;
+  }
+
+  .sidebar-sub {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 4px;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 0;
+  }
+
+  .nav-section {
+    margin-bottom: 4px;
+  }
+
+  .nav-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 8px 20px 4px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+    font-size: 13px;
+    color: var(--text2);
+  }
+
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { 
+    background: rgba(99,102,241,0.1); 
+    color: var(--accent); 
+    border-left-color: var(--accent);
+    font-weight: 500;
+  }
+
+  .nav-icon { font-size: 14px; width: 18px; text-align: center; }
+
+  .progress-bar {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .progress-label {
+    font-size: 11px;
+    color: var(--text3);
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .progress-track {
+    height: 3px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+
+  /* Main */
+  #main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .topbar {
+    padding: 14px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+  }
+
+  .breadcrumb {
+    font-size: 12px;
+    color: var(--text3);
+  }
+
+  .breadcrumb span { color: var(--text2); }
+
+  .action-btns {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+
+  .btn-primary:hover { background: #4f46e5; }
+
+  #content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px 40px;
+  }
+
+  /* Page styles */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .page-header {
+    margin-bottom: 32px;
+  }
+
+  .page-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+
+  .tag-foundation { background: rgba(99,102,241,0.15); color: var(--accent); }
+  .tag-method { background: rgba(16,185,129,0.15); color: var(--green); }
+  .tag-advanced { background: rgba(245,158,11,0.15); color: var(--yellow); }
+  .tag-practice { background: rgba(6,182,212,0.15); color: var(--accent3); }
+
+  .page-title {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 10px;
+  }
+
+  .page-desc {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.7;
+    max-width: 720px;
+  }
+
+  /* Cards */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .card:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(99,102,241,0.1);
+  }
+
+  .card-icon { font-size: 22px; margin-bottom: 10px; }
+  .card-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .card-desc { font-size: 12px; color: var(--text2); line-height: 1.6; }
+
+  /* Section */
+  .section {
+    margin-bottom: 32px;
+  }
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Callout */
+  .callout {
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    border-left: 3px solid;
+  }
+
+  .callout-insight { background: rgba(99,102,241,0.08); border-color: var(--accent); }
+  .callout-warning { background: rgba(245,158,11,0.08); border-color: var(--yellow); }
+  .callout-success { background: rgba(16,185,129,0.08); border-color: var(--green); }
+  .callout-danger { background: rgba(239,68,68,0.08); border-color: var(--red); }
+
+  .callout-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+
+  .callout-insight .callout-title { color: var(--accent); }
+  .callout-warning .callout-title { color: var(--yellow); }
+  .callout-success .callout-title { color: var(--green); }
+  .callout-danger .callout-title { color: var(--red); }
+
+  .callout p { font-size: 13px; color: var(--text2); line-height: 1.7; }
+
+  /* Text */
+  .prose h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 24px 0 10px;
+    color: var(--text);
+  }
+
+  .prose h4 {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 18px 0 8px;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .prose p {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.8;
+    margin-bottom: 12px;
+  }
+
+  .prose ul, .prose ol {
+    padding-left: 20px;
+    margin-bottom: 16px;
+  }
+
+  .prose li {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.8;
+    margin-bottom: 4px;
+  }
+
+  .prose strong { color: var(--text); }
+
+  /* Table */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+
+  .data-table th {
+    background: var(--surface2);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text3);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .data-table td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text2);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* Badge */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .badge-pass { background: rgba(16,185,129,0.15); color: var(--green); }
+  .badge-fail { background: rgba(239,68,68,0.15); color: var(--red); }
+  .badge-level1 { background: rgba(99,102,241,0.15); color: var(--accent); }
+  .badge-level2 { background: rgba(139,92,246,0.15); color: var(--accent2); }
+  .badge-level3 { background: rgba(245,158,11,0.15); color: var(--yellow); }
+
+  /* Steps */
+  .steps {
+    margin-bottom: 24px;
+  }
+
+  .step {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 36px;
+    bottom: -4px;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .step-num {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    z-index: 1;
+  }
+
+  .step-body { flex: 1; padding-top: 4px; }
+
+  .step-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .step-desc {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+
+  /* Code */
+  .code-block {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: "SF Mono", "Fira Code", monospace;
+    font-size: 12px;
+    color: #e6edf3;
+    overflow-x: auto;
+    margin-bottom: 20px;
+    line-height: 1.7;
+  }
+
+  .code-comment { color: #6e7681; }
+  .code-keyword { color: #ff7b72; }
+  .code-string { color: #a5d6ff; }
+  .code-fn { color: #d2a8ff; }
+  .code-num { color: #79c0ff; }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+    gap: 0;
+  }
+
+  .tab {
+    padding: 10px 18px;
+    font-size: 13px;
+    color: var(--text3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+  }
+
+  .tab:hover { color: var(--text2); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Comparison */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .compare-card {
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 18px;
+    border: 1px solid var(--border);
+  }
+
+  .compare-card.bad { border-color: rgba(239,68,68,0.3); }
+  .compare-card.good { border-color: rgba(16,185,129,0.3); }
+
+  .compare-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+
+  .compare-card.bad .compare-label { color: var(--red); }
+  .compare-card.good .compare-label { color: var(--green); }
+
+  .compare-card p {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+
+  /* Pyramid */
+  .pyramid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin: 24px 0;
+  }
+
+  .pyramid-level {
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 14px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .pyramid-level:hover { opacity: 0.85; }
+
+  .pyramid-l1 {
+    width: 90%;
+    background: rgba(99,102,241,0.2);
+    border: 1px solid rgba(99,102,241,0.4);
+  }
+
+  .pyramid-l2 {
+    width: 70%;
+    background: rgba(139,92,246,0.2);
+    border: 1px solid rgba(139,92,246,0.4);
+  }
+
+  .pyramid-l3 {
+    width: 50%;
+    background: rgba(245,158,11,0.2);
+    border: 1px solid rgba(245,158,11,0.4);
+  }
+
+  .pyramid-level-title { font-size: 14px; font-weight: 600; }
+  .pyramid-level-sub { font-size: 11px; color: var(--text2); margin-top: 3px; }
+
+  /* Home stats */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .stat-num {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .stat-label { font-size: 12px; color: var(--text3); }
+
+  /* Quote */
+  .quote {
+    border-left: 3px solid var(--accent2);
+    padding: 12px 18px;
+    margin: 20px 0;
+    background: rgba(139,92,246,0.05);
+    border-radius: 0 6px 6px 0;
+  }
+
+  .quote p {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  .quote cite {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 6px;
+    display: block;
+    font-style: normal;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+  /* Quiz styles */
+  .quiz-section {
+    margin-top: 40px;
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+  }
+  .quiz-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .quiz-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .quiz-score-badge {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: var(--surface2);
+    color: var(--text2);
+  }
+  .quiz-question {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 14px;
+    transition: border-color 0.2s;
+  }
+  .quiz-question.answered-correct { border-color: var(--green); }
+  .quiz-question.answered-wrong { border-color: var(--red); }
+  .quiz-q-num {
+    font-size: 11px;
+    color: var(--text3);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .quiz-q-text {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .quiz-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 13px;
+    color: var(--text2);
+    background: var(--surface2);
+  }
+  .quiz-option:hover:not(.disabled) { border-color: var(--accent); color: var(--text); }
+  .quiz-option.correct { background: rgba(16,185,129,0.1); border-color: var(--green); color: var(--green); }
+  .quiz-option.wrong { background: rgba(239,68,68,0.1); border-color: var(--red); color: var(--red); }
+  .quiz-option.disabled { cursor: default; opacity: 0.7; }
+  .quiz-option.show-correct { background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.4); color: var(--green); }
+  .quiz-feedback {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.6;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.fb-correct { background: rgba(16,185,129,0.08); color: var(--green); }
+  .quiz-feedback.fb-wrong { background: rgba(239,68,68,0.08); color: #f87171; }
+  .quiz-result {
+    text-align: center;
+    padding: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-top: 16px;
+    display: none;
+  }
+  .quiz-result.show { display: block; }
+  .quiz-result-score { font-size: 36px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+  .quiz-result-msg { font-size: 14px; color: var(--text2); margin-bottom: 16px; }
+  .btn-reset {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .btn-reset:hover { border-color: var(--accent); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <a href="../../index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);text-decoration:none;margin-bottom:10px;transition:color .2s" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text3)'">← 返回作品集</a>
+    <div class="sidebar-title">⚡ LLM Evals 知识平台</div>
+    <div class="sidebar-sub">系统化掌握 AI 评估体系</div>
+  </div>
+
+  <div class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-label">起点</div>
+      <div class="nav-item active" onclick="showPage('home', this)">
+        <span class="nav-icon">🏠</span> 知识地图
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-label">基础概念</div>
+      <div class="nav-item" onclick="showPage('what', this)">
+        <span class="nav-icon">🔍</span> Eval 是什么
+      </div>
+      <div class="nav-item" onclick="showPage('why', this)">
+        <span class="nav-icon">💡</span> 为什么必须做 Eval
+      </div>
+      <div class="nav-item" onclick="showPage('trace', this)">
+        <span class="nav-icon">🧵</span> Trace：评估的基本单位
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-label">核心方法论</div>
+      <div class="nav-item" onclick="showPage('error', this)">
+        <span class="nav-icon">🔬</span> Error Analysis（最重要）
+      </div>
+      <div class="nav-item" onclick="showPage('three-levels', this)">
+        <span class="nav-icon">📊</span> 三层 Eval 体系
+      </div>
+      <div class="nav-item" onclick="showPage('passfail', this)">
+        <span class="nav-icon">✅</span> Pass/Fail vs 评分制
+      </div>
+      <div class="nav-item" onclick="showPage('expert', this)">
+        <span class="nav-icon">👤</span> 领域专家与数据标注
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-label">进阶专题</div>
+      <div class="nav-item" onclick="showPage('judge', this)">
+        <span class="nav-icon">🤖</span> LLM-as-a-Judge
+      </div>
+      <div class="nav-item" onclick="showPage('dataset', this)">
+        <span class="nav-icon">📦</span> 数据集构建
+      </div>
+      <div class="nav-item" onclick="showPage('rag', this)">
+        <span class="nav-icon">📚</span> RAG 的评估
+      </div>
+      <div class="nav-item" onclick="showPage('production', this)">
+        <span class="nav-icon">🚀</span> 生产环境监控
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-label">落地实践</div>
+      <div class="nav-item" onclick="showPage('mistakes', this)">
+        <span class="nav-icon">⚠️</span> 常见错误与反模式
+      </div>
+      <div class="nav-item" onclick="showPage('pm', this)">
+        <span class="nav-icon">🎯</span> 产品经理的 Eval 视角
+      </div>
+      <div class="nav-item" onclick="showPage('faq', this)">
+        <span class="nav-icon">❓</span> 常见问题 FAQ
+      </div>
+      <div class="nav-item" onclick="showPage('course', this)">
+        <span class="nav-icon">🎓</span> Maven 课程深度解析
+      </div>
+    </div>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-label">
+      <span>学习进度</span>
+      <span id="progress-text">1/13</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:8%"></div>
+    </div>
+  </div>
+</nav>
+
+<!-- Main -->
+<div id="main">
+  <div class="topbar">
+    <div class="breadcrumb" id="breadcrumb">知识地图</div>
+    <div class="action-btns">
+      <button class="btn btn-outline" onclick="navPrev()">← 上一节</button>
+      <button class="btn btn-primary" onclick="navNext()">下一节 →</button>
+    </div>
+  </div>
+
+  <div id="content">
+
+    <!-- HOME -->
+    <div class="page active" id="page-home">
+      <div class="page-header">
+        <div class="page-tag tag-foundation">知识地图</div>
+        <div class="page-title">LLM Evals：AI 产品的质量飞轮</div>
+        <div class="page-desc">系统化构建 LLM 评估体系。本平台基于 Hamel Husain 帮助 30+ 公司落地 Eval 系统的第一手经验，从概念到实践逐层深入。</div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-num">60-80%</div>
+          <div class="stat-label">顶尖团队投入 Eval 的开发时间占比</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">3</div>
+          <div class="stat-label">Eval 的核心层次（Unit / Human+Model / A/B）</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">100+</div>
+          <div class="stat-label">Error Analysis 至少需要阅读的 Trace 数量</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">Pass/Fail</div>
+          <div class="stat-label">正确的评判粒度，不是 1-5 分</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">知识体系结构</div>
+        <div class="card-grid">
+          <div class="card" onclick="showPage('what', document.querySelector('[onclick*=\"what\"]'))">
+            <div class="card-icon">🔍</div>
+            <div class="card-title">基础概念</div>
+            <div class="card-desc">Eval 是什么、为什么做、Trace 的定义——建立正确的心智模型，避免从一开始就走错方向。</div>
+          </div>
+          <div class="card" onclick="showPage('error', document.querySelector('[onclick*=\"error\"]'))">
+            <div class="card-icon">🔬</div>
+            <div class="card-title">Error Analysis（核心）</div>
+            <div class="card-desc">整个 Eval 体系的起点。不是工具，不是基础设施，而是人工读数据。这是最被低估的核心工作。</div>
+          </div>
+          <div class="card" onclick="showPage('three-levels', document.querySelector('[onclick*=\"three-levels\"]'))">
+            <div class="card-icon">📊</div>
+            <div class="card-title">三层 Eval 体系</div>
+            <div class="card-desc">Unit Tests → Human & Model Eval → A/B Testing。三层各有定位，成本递增，使用频率递减。</div>
+          </div>
+          <div class="card" onclick="showPage('judge', document.querySelector('[onclick*=\"judge\"]'))">
+            <div class="card-icon">🤖</div>
+            <div class="card-title">LLM-as-a-Judge</div>
+            <div class="card-desc">如何用 LLM 自动化评估？Critique Shadowing 方法论：7步从零建立对齐人类判断的 LLM 评判系统。</div>
+          </div>
+          <div class="card" onclick="showPage('mistakes', document.querySelector('[onclick*=\"mistakes\"]'))">
+            <div class="card-icon">⚠️</div>
+            <div class="card-title">常见错误与反模式</div>
+            <div class="card-desc">最贵的错误不是技术失败，而是用错了评估框架。用通用指标、跳过人工标注、过早自动化……</div>
+          </div>
+          <div class="card" onclick="showPage('pm', document.querySelector('[onclick*=\"pm\"]'))">
+            <div class="card-icon">🎯</div>
+            <div class="card-title">产品经理的视角</div>
+            <div class="card-desc">Eval 不只是工程问题。PM 是最重要的 Benevolent Dictator，你的判断力决定了评估体系的质量。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-insight">
+        <div class="callout-title">💡 核心洞察</div>
+        <p>大多数 AI 产品失败的根本原因不是模型不够好，而是缺乏健壮的评估系统。没有 Eval，你无法知道改动是否有效，无法系统地改进，无法调试，也无法做精调。Eval 是 AI 产品迭代速度的核心基础设施。</p>
+      </div>
+
+      <div class="callout callout-warning">
+        <div class="callout-title">⚠️ 建议学习路径</div>
+        <p>建议按左侧导航顺序阅读：基础概念 → Error Analysis → 三层体系 → Pass/Fail → LLM-as-Judge → 生产监控 → 常见错误。每节都有独立价值，但有前后依赖关系。</p>
+      </div>
+    </div>
+
+    <!-- WHAT IS EVAL -->
+    <div class="page" id="page-what">
+      <div class="page-header">
+        <div class="page-tag tag-foundation">基础概念</div>
+        <div class="page-title">Eval 是什么？</div>
+        <div class="page-desc">在动手搭 Eval 系统之前，先把概念想清楚。很多人走弯路，是因为对"评估"的理解本身就错了。</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">核心定义</div>
+        <div class="prose">
+          <h3>Trace：评估的基本单位</h3>
+          <p><strong>Trace</strong> 是从用户发出第一条消息，到系统给出最终回复的完整记录——包括所有中间步骤、工具调用、检索结果、多轮对话上下文。</p>
+          <p>在 LLM 产品里，一个 Trace 可能包含：用户输入 → 检索召回 → Prompt 构建 → 模型推理 → 工具调用 → 最终输出。每一个环节都是可以出问题的地方。</p>
+
+          <h3>Eval：基于 Trace 的判断</h3>
+          <p><strong>Eval</strong> = 基于 Trace，判断系统在这次交互里有没有失败。</p>
+          <p>注意：Eval 不是一个工具，不是一个平台，不是一个 Dashboard。Eval 是一个<strong>判断活动</strong>——由人、由规则、或由另一个模型来执行这个判断。</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Eval vs 传统软件测试</div>
+        <div class="compare-grid">
+          <div class="compare-card">
+            <div class="compare-label">❌ 传统软件测试</div>
+            <p>输入确定，输出确定。测试是验证逻辑正确性，有明确的 Pass/Fail 标准，可以 100% 自动化。</p>
+          </div>
+          <div class="compare-card good">
+            <div class="compare-label">✅ LLM Eval</div>
+            <p>输出是概率性的，没有唯一正确答案。"好的回答"是主观判断，需要人工建立评判标准，自动化只能辅助，不能替代。</p>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-title">⚠️ 常见误区</div>
+          <p>不能把 LLM Eval 理解为"测试 AI 对不对"。应该理解为"在真实条件下，AI 是否达到了用户期望的结果"。"对不对"是技术视角，"是否达到期望"是产品视角——两者在 LLM 场景里经常不一致。</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Eval 的三种执行方式</div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>方式</th>
+              <th>执行者</th>
+              <th>优势</th>
+              <th>局限</th>
+              <th>适用场景</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>规则/断言</strong></td>
+              <td>代码</td>
+              <td>快、稳定、可重现</td>
+              <td>只能覆盖可形式化的约束</td>
+              <td>格式验证、禁止词检查、长度限制</td>
+            </tr>
+            <tr>
+              <td><strong>人工评估</strong></td>
+              <td>人</td>
+              <td>最准确、能捕捉细微差异</td>
+              <td>慢、贵、不可扩展</td>
+              <td>建立 Ground Truth、验证自动化</td>
+            </tr>
+            <tr>
+              <td><strong>LLM-as-Judge</strong></td>
+              <td>另一个 LLM</td>
+              <td>可扩展、能处理复杂判断</td>
+              <td>必须对齐人类判断才可信</td>
+              <td>大规模自动评估（需先人工校准）</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-insight">
+          <div class="callout-title">💡 关键原则</div>
+          <p>三种方式不是替代关系，是叠加关系。任何成熟的 Eval 系统都三者并用。人工评估是基础，不可跳过；LLM-as-Judge 是人工评估的放大器，不是替代品。</p>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-title">🧠 章节测验</div>
+          <div class="quiz-score-badge">0/3 答对</div>
+        </div>
+        <div id="quiz-what">
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 1 题 · 单选</div>
+            <div class="quiz-q-text">以下哪个描述最准确地表达了 Eval 的本质？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 一个用于评分 AI 输出的工具平台</div>
+              <div class="quiz-option">B. 基于 Trace，判断系统在这次交互中是否失败的判断活动</div>
+              <div class="quiz-option">C. 自动化测试框架</div>
+              <div class="quiz-option">D. AI 模型的性能基准测试</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！Eval 是判断活动，不是工具或平台。执行者可以是人、规则或另一个模型，关键是"基于 Trace 做出判断"这个动作。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。Eval 的本质是"判断活动"而非工具/平台，其输入是 Trace，输出是 Pass/Fail 判断。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 2 题 · 判断</div>
+            <div class="quiz-q-text">LLM-as-Judge 可以完全替代人工评估，只要它的准确率足够高。</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 正确</div>
+              <div class="quiz-option">B. 错误</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！LLM-as-Judge 是人工评估的"放大器"，不是替代品。没有人工建立的 Ground Truth，LLM Judge 没有对齐的基础。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是"错误"。三种评估方式是叠加关系，人工评估是基础，LLM-as-Judge 必须以人工标注的 Ground Truth 为基础才能可信。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 3 题 · 场景题</div>
+            <div class="quiz-q-text">你的团队刚开始做 AI 客服系统，还没有任何用户数据。以下哪个是最合适的第一步 Eval 行动？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 购买一个 LLM Eval SaaS 平台</div>
+              <div class="quiz-option">B. 先上线收集真实 Trace，再做 Eval</div>
+              <div class="quiz-option">C. 用通用的 ROUGE/BERTScore 指标评估输出质量</div>
+              <div class="quiz-option">D. 雇外包团队标注数据</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！没有真实数据之前无法做有意义的 Eval。先上线（哪怕小规模），收集真实 Trace，然后人工阅读，才是正确起点。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。在没有真实数据之前购买工具或外包标注都是浪费资源。LLM 会以意想不到的方式失败，只有真实数据才能揭示这些问题。</div>
+          </div>
+        </div>
+        <div class="quiz-result">
+          <div class="quiz-result-score"></div>
+          <div class="quiz-result-msg"></div>
+          <button class="btn-reset">重新作答</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHY -->
+    <div class="page" id="page-why">
+      <div class="page-header">
+        <div class="page-tag tag-foundation">基础概念</div>
+        <div class="page-title">为什么必须做 Eval？</div>
+        <div class="page-desc">不是因为"最佳实践"，而是因为没有 Eval，AI 产品无法突破某个瓶颈——而且你不知道自己卡在哪。</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">没有 Eval 会发生什么</div>
+        <div class="prose">
+          <p>AI 产品在早期往往进展顺利：Prompt Engineering 快速出效果，Demo 好看，团队信心满满。但到某个阶段，进展会突然停滞：</p>
+          <ul>
+            <li>修复一个失败模式，另一个随之出现——<strong>打地鼠效应</strong></li>
+            <li>对 AI 的整体效果，只有"感觉"，没有数据</li>
+            <li>Prompt 越改越长，试图覆盖越来越多的 Edge Case</li>
+            <li>无法判断一次 Prompt 修改是否真的让整体变好了</li>
+          </ul>
+          <p>这是几乎所有 AI 产品都会经历的平台期。突破它的唯一方法是建立系统化的评估体系。</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Eval 创造的飞轮效应</div>
+        <div class="callout callout-success">
+          <div class="callout-title">✅ Eval 系统的价值不止于评估本身</div>
+          <p>一个好的 Eval 系统，同时就是你的：<strong>调试基础设施</strong>（快速定位失败根因）、<strong>精调数据引擎</strong>（高质量标注数据直接用于 Fine-tune）、<strong>数据合成工具</strong>（Eval 判断可以过滤合成数据质量）。</p>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Eval 能力</th>
+              <th>额外获得的能力</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Trace 日志 + 搜索过滤</td>
+              <td>调试能力：快速找到失败的根因是模型、RAG 还是代码 Bug</td>
+            </tr>
+            <tr>
+              <td>人工标注（Pass/Fail + Critique）</td>
+              <td>Fine-tune 数据：直接用于模型精调，质量有保证</td>
+            </tr>
+            <tr>
+              <td>LLM-as-Judge + 失败分类</td>
+              <td>合成数据过滤：生成大量合成数据，用 Judge 过滤低质量样本</td>
+            </tr>
+            <tr>
+              <td>CI/CD 集成的 Unit Tests</td>
+              <td>回归防护：每次代码变更自动验证，防止好不容易修复的问题复现</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <div class="section-title">迭代速度决定成败</div>
+        <div class="prose">
+          <p>AI 产品的成功，和软件工程一样，核心取决于<strong>迭代速度</strong>。迭代速度需要三个条件同时具备：</p>
+          <ol>
+            <li><strong>评估质量的能力</strong>（Eval 系统）</li>
+            <li><strong>调试问题的能力</strong>（日志 + 工具）</li>
+            <li><strong>改变系统的能力</strong>（Prompt Engineering、Fine-tune、代码）</li>
+          </ol>
+          <p>大多数团队只有第三条，缺前两条。结果是改了很多，但不知道是否变好，也不知道为什么失败。</p>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-title">🧠 章节测验</div>
+          <div class="quiz-score-badge">0/3 答对</div>
+        </div>
+        <div id="quiz-why">
+          <div class="quiz-question" data-correct="2">
+            <div class="quiz-q-num">第 1 题 · 单选</div>
+            <div class="quiz-q-text">没有 Eval 系统的 AI 产品团队最常遇到的瓶颈是？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 模型能力不够强</div>
+              <div class="quiz-option">B. 工程基础设施不完善</div>
+              <div class="quiz-option">C. 修复一个问题，另一个随之出现的"打地鼠效应"</div>
+              <div class="quiz-option">D. 缺乏足够的训练数据</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！在没有 Eval 的情况下，Prompt 的每次修改都可能解决一个问题同时引入另一个问题，因为没有系统化方法追踪整体质量变化。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是C。"打地鼠效应"是最典型的症状——根本原因是缺少对整体质量的量化追踪能力。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 2 题 · 判断</div>
+            <div class="quiz-q-text">Eval 系统的价值只在于评估 AI 的输出质量，和数据收集、模型训练无关。</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 正确</div>
+              <div class="quiz-option">B. 错误</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！Eval 系统同时创造调试基础设施、精调数据引擎和数据合成过滤工具。人工标注数据可以直接用于 Fine-tune，是多重价值。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是"错误"。Eval 系统的价值是多维的：人工标注数据 → 精调数据，Trace 日志 → 调试能力，LLM Judge → 合成数据过滤。评估只是价值之一。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 3 题 · 场景题</div>
+            <div class="quiz-q-text">一个 AI 产品团队的 Prompt 已经修改了 50 次，但团队对产品质量是否在提升仍然没有把握。最根本的原因是什么？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 他们需要更好的模型</div>
+              <div class="quiz-option">B. 他们缺乏评估质量的能力，无法追踪每次修改的实际效果</div>
+              <div class="quiz-option">C. 他们的用户需求不够清晰</div>
+              <div class="quiz-option">D. 他们需要更多 Prompt 工程师</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！没有 Eval，即使做了 50 次修改，也不知道累积效果如何，因为没有基线，没有量化追踪，没有回归防护。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。迭代速度的三个条件：评估质量的能力、调试问题的能力、改变系统的能力——缺少第一个，改得越多越混乱。</div>
+          </div>
+        </div>
+        <div class="quiz-result">
+          <div class="quiz-result-score"></div>
+          <div class="quiz-result-msg"></div>
+          <button class="btn-reset">重新作答</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRACE -->
+    <div class="page" id="page-trace">
+      <div class="page-header">
+        <div class="page-tag tag-foundation">基础概念</div>
+        <div class="page-title">Trace：评估的基本单位</div>
+        <div class="page-desc">理解 Trace 是什么，如何记录，以及如何让查看 Trace 变得没有摩擦——这是 Eval 系统的基础设施。</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Trace 的结构</div>
+        <div class="prose">
+          <p>Trace 是一次完整交互的全量记录。对于一个 Agent 系统，一个 Trace 可能包含：</p>
+        </div>
+        <div class="code-block">
+<span class="code-comment"># 一个典型 Agent Trace 的结构</span>
+{
+  <span class="code-string">"trace_id"</span>: <span class="code-string">"abc-123"</span>,
+  <span class="code-string">"user_input"</span>: <span class="code-string">"帮我找一下 3 月 10 号北京到上海的机票"</span>,
+  <span class="code-string">"steps"</span>: [
+    {
+      <span class="code-string">"step"</span>: <span class="code-string">"intent_recognition"</span>,
+      <span class="code-string">"output"</span>: <span class="code-string">"flight_search"</span>,
+      <span class="code-string">"latency_ms"</span>: <span class="code-num">120</span>
+    },
+    {
+      <span class="code-string">"step"</span>: <span class="code-string">"tool_call"</span>,
+      <span class="code-string">"tool"</span>: <span class="code-string">"search_flights"</span>,
+      <span class="code-string">"params"</span>: { <span class="code-string">"date"</span>: <span class="code-string">"2024-03-10"</span>, <span class="code-string">"from"</span>: <span class="code-string">"BJS"</span>, <span class="code-string">"to"</span>: <span class="code-string">"SHA"</span> },
+      <span class="code-string">"result"</span>: [...]
+    },
+    {
+      <span class="code-string">"step"</span>: <span class="code-string">"final_response"</span>,
+      <span class="code-string">"output"</span>: <span class="code-string">"为您找到以下航班..."</span>
+    }
+  ],
+  <span class="code-string">"metadata"</span>: {
+    <span class="code-string">"user_id"</span>: <span class="code-string">"u456"</span>,
+    <span class="code-string">"session_id"</span>: <span class="code-string">"s789"</span>,
+    <span class="code-string">"model"</span>: <span class="code-string">"gpt-4"</span>,
+    <span class="code-string">"total_latency_ms"</span>: <span class="code-num">1840</span>
+  }
+}
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">消除查看 Trace 的摩擦</div>
+        <div class="callout callout-insight">
+          <div class="callout-title">💡 核心原则</div>
+          <p>Trace 查看工具的设计原则只有一条：<strong>把理解一次交互所需的所有信息放在同一个屏幕上</strong>，不需要跳转，不需要打开另一个系统。任何摩擦都会导致你少看数据，而少看数据就意味着少发现问题。</p>
+        </div>
+
+        <div class="prose">
+          <h3>一个好的 Trace 查看工具应该有什么</h3>
+          <ul>
+            <li>当前交互涉及哪个 Feature 和 Scenario</li>
+            <li>是真实用户输入还是合成测试数据</li>
+            <li>快速过滤：按 Feature、Scenario、用户类型、时间段</li>
+            <li>相关业务系统的直接链接（CRM、数据库、日志系统）</li>
+            <li>Pass/Fail 标注入口，不需要离开界面</li>
+          </ul>
+
+          <h3>工具选择</h3>
+          <p>不需要买贵的工具。<strong>LangSmith</strong>（不必须用 LangChain）是不错的起点。更好的做法是用 Gradio / Streamlit / Shiny 在一天内自己搭一个，因为每个业务的信息需求都不同，定制工具比通用工具更高效。</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">哪些 Trace 值得重点看</div>
+        <table class="data-table">
+          <thead>
+            <tr><th>优先级</th><th>类型</th><th>原因</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="badge badge-fail">高优先</span></td>
+              <td>被用户明确反馈差的对话</td>
+              <td>真实失败，直接影响用户体验</td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-fail">高优先</span></td>
+              <td>多次重试或对话特别长的</td>
+              <td>用户在挣扎，系统没有解决问题</td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-level2">中优先</span></td>
+              <td>触发异常或错误的对话</td>
+              <td>技术失败，可能有系统性原因</td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-level1">日常</span></td>
+              <td>随机抽样的正常对话</td>
+              <td>维持对系统整体状态的感知</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-title">🧠 章节测验</div>
+          <div class="quiz-score-badge">0/3 答对</div>
+        </div>
+        <div id="quiz-trace">
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 1 题 · 单选</div>
+            <div class="quiz-q-text">Trace 查看工具最重要的设计原则是？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 界面要美观、有完整的数据可视化</div>
+              <div class="quiz-option">B. 把理解一次交互所需的所有信息放在同一个屏幕上</div>
+              <div class="quiz-option">C. 支持批量导出数据到 Excel</div>
+              <div class="quiz-option">D. 和现有的监控系统做深度集成</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！任何需要跳转到另一个系统才能理解一次交互的设计，都会增加摩擦，导致少看数据。少看数据 = 少发现问题。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。"消除摩擦"是核心原则，任何增加理解成本的设计都会让团队减少查看数据的频率。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 2 题 · 场景题</div>
+            <div class="quiz-q-text">以下哪类 Trace 应该优先安排人工阅读？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 随机抽样的正常对话</div>
+              <div class="quiz-option">B. 被用户明确反馈差的对话和多次重试的对话</div>
+              <div class="quiz-option">C. 处理时间最短的对话</div>
+              <div class="quiz-option">D. 最近 24 小时内的所有对话</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！用户负面反馈和多次重试是明确的失败信号，能以最高效率发现最真实的问题。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。被用户反馈差的对话代表真实失败，多次重试说明用户在挣扎。这两类 Trace 的信息密度最高。</div>
+          </div>
+          <div class="quiz-question" data-correct="0">
+            <div class="quiz-q-num">第 3 题 · 判断</div>
+            <div class="quiz-q-text">不需要购买昂贵的 Trace 管理工具，用 Gradio/Streamlit 一天内自建一个更好。</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 正确</div>
+              <div class="quiz-option">B. 错误</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！每个业务的信息需求都不同，通用工具往往无法精确展示你业务最关键的上下文。一天内自建一个定制工具通常比购买通用平台更高效。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是"正确"。通用工具无法为你的业务定制最关键的信息展示，自建一个专用工具成本低且更契合需求。</div>
+          </div>
+        </div>
+        <div class="quiz-result">
+          <div class="quiz-result-score"></div>
+          <div class="quiz-result-msg"></div>
+          <button class="btn-reset">重新作答</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ERROR ANALYSIS -->
+    <div class="page" id="page-error">
+      <div class="page-header">
+        <div class="page-tag tag-method">核心方法论</div>
+        <div class="page-title">Error Analysis：整个 Eval 体系的起点</div>
+        <div class="page-desc">不是工具，不是基础设施。是人工读数据，是建立业务直觉的过程。这是 Eval 里最重要的活动，没有之一。</div>
+      </div>
+
+      <div class="callout callout-insight">
+        <div class="callout-title">💡 为什么 Error Analysis 最重要</div>
+        <p>Error Analysis 回答的是"我需要评估什么"，而不是"如何评估"。很多团队跳过这一步，直接用现成的 Eval 指标，结果测的是和自己业务完全无关的东西——指标很好看，产品一样烂。</p>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Error Analysis 的四步流程</div>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Open Coding（开放编码）</div>
+              <div class="step-desc">
+                人工读 Trace，用自由格式写失败笔记。<strong>不预设分类，不套模板。</strong>就像写日记一样，看到什么问题就写什么。这一步必须自己做，不能外包给 LLM——这是建立业务直觉的过程，这个过程本身比结果更有价值。
+                <br><br>
+                <strong>示例笔记：</strong>"用户问了一个有歧义的问题，模型选了最常见的解读，但用户的上下文说明他想要的是另一种。" / "模型的回答格式完全正确，但忽略了一个关键约束条件。"
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Axial Coding（轴向编码）</div>
+              <div class="step-desc">
+                把 Open Coding 的笔记归类，形成"失败分类体系"，统计每类出现的次数。这时候可以用 LLM 辅助——把你写的 30-50 条笔记给 LLM，让它帮你归类和总结。但 LLM 的归类结果必须人工校验。
+                <br><br>
+                <strong>示例失败分类：</strong>歧义输入处理失败 / 约束条件遗漏 / 知识边界外幻觉 / 多步推理链断裂 / 格式不符合预期……
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">迭代直到理论饱和</div>
+              <div class="step-desc">
+                持续看新 Trace，继续更新分类体系。当新的 Trace 不再触发新的失败类别时，说明你的分类体系已经覆盖了当前的主要失败模式——这叫<strong>理论饱和</strong>，是停止迭代的信号。
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <div class="step-title">基于分类体系设计 Eval</div>
+              <div class="step-desc">
+                现在你知道要评估什么了。每一个失败类别，都可以对应设计一个具体的 Eval：断言（Unit Test）或 LLM Judge 的评判标准。从最高频的失败类别开始，优先覆盖。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">数量建议</div>
+        <div class="prose">
+          <p>至少读 <strong>100 条 Trace</strong> 才能开始建立系统性认知。在这之前，你看到的只是随机样本，不足以形成可靠的失败分类。</p>
+          <p>一个实用的停止标准：<strong>读完新的 Trace 不再觉得有什么新东西</strong>——这比看一个固定数字更准确。</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">LLM 在 Error Analysis 中能做什么、不能做什么</div>
+        <div class="compare-grid">
+          <div class="compare-card bad">
+            <div class="compare-label">❌ 不能交给 LLM</div>
+            <p>
+              • 初始的 Open Coding（必须自己读，这是建立业务直觉的过程）<br>
+              • 验证失败分类体系的准确性<br>
+              • 根因分析（为什么这类失败反复出现）<br>
+              • Ground Truth 标注（用于校准 LLM Judge 的数据必须人工标）
+            </p>
+          </div>
+          <div class="compare-card good">
+            <div class="compare-label">✅ 可以用 LLM 辅助</div>
+            <p>
+              • 将 Open Coding 笔记归类（在你写了 30-50 条之后）<br>
+              • 把新的失败案例映射到已有的失败分类<br>
+              • 生成更多覆盖特定失败类别的测试用例<br>
+              • 提示词改进建议（人工审核后再用）
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="quote">
+        <p>"先自己看数据建立认知，再用 LLM 放大你学到的东西。不要用 LLM 来替代你看数据。"</p>
+        <cite>— Hamel Husain, Parlance Labs</cite>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-title">🧠 章节测验</div>
+          <div class="quiz-score-badge">0/4 答对</div>
+        </div>
+        <div id="quiz-error">
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 1 题 · 单选</div>
+            <div class="quiz-q-text">Error Analysis 的第一步 Open Coding 必须由人来做，不能外包给 LLM，最根本的原因是？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. LLM 的准确率不够高</div>
+              <div class="quiz-option">B. 这个过程本身是建立业务直觉的过程，过程本身比结果更有价值</div>
+              <div class="quiz-option">C. LLM 不能读取 Trace 数据</div>
+              <div class="quiz-option">D. 成本太高</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！Open Coding 不只是产生分类结果，更是让你对自己的 AI 系统建立第一手认知。这个认知是无法通过看 LLM 总结获得的。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。亲自读数据的过程让你理解用户真实行为、AI 真实失败模式。这种直觉是指导后续所有决策的基础，无法委托。</div>
+          </div>
+          <div class="quiz-question" data-correct="2">
+            <div class="quiz-q-num">第 2 题 · 单选</div>
+            <div class="quiz-q-text">什么信号表明 Error Analysis 可以停止迭代了？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 读了 100 条 Trace</div>
+              <div class="quiz-option">B. 失败分类超过 10 个</div>
+              <div class="quiz-option">C. 新的 Trace 不再触发新的失败类别——理论饱和</div>
+              <div class="quiz-option">D. 团队达成共识</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！理论饱和意味着你的分类体系已经覆盖了当前的主要失败模式。这是质量信号，比固定数量更准确。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是C。"理论饱和"——当新数据不再产生新分类时，说明你已经建立了完整的失败模式图谱，可以进入下一步。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 3 题 · 场景题</div>
+            <div class="quiz-q-text">你已经写了 40 条 Open Coding 笔记，想用 LLM 来做归类。以下哪个做法是正确的？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 把笔记给 LLM，接受它的归类结果直接用</div>
+              <div class="quiz-option">B. 把笔记给 LLM 帮你归类，然后人工校验归类结果</div>
+              <div class="quiz-option">C. 不应该用 LLM，整个过程必须人工完成</div>
+              <div class="quiz-option">D. 先让 LLM 生成分类，再用另一个 LLM 验证</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！LLM 可以辅助轴向编码阶段的归类，但其输出必须经过人工验证。LLM 不了解你的业务上下文，可能会产生看似合理但不准确的归类。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。LLM 可以帮你加速归类工作，但不能替代你对归类准确性的验证。你的业务判断是最终标准。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 4 题 · 判断</div>
+            <div class="quiz-q-text">在 Error Analysis 之前就设计好 Eval 指标，是一种高效的"超前规划"。</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 正确</div>
+              <div class="quiz-option">B. 错误</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！Error Analysis 的目的就是告诉你"需要评估什么"。在做完 Error Analysis 之前设计 Eval 指标，几乎必然测的是你想象中的失败，而不是真实失败。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是"错误"。跳过 Error Analysis 直接设计指标是典型反模式，会导致评估和业务脱节。Error Analysis 是"找到要测什么"的过程，不可跳过。</div>
+          </div>
+        </div>
+        <div class="quiz-result">
+          <div class="quiz-result-score"></div>
+          <div class="quiz-result-msg"></div>
+          <button class="btn-reset">重新作答</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- THREE LEVELS -->
+    <div class="page" id="page-three-levels">
+      <div class="page-header">
+        <div class="page-tag tag-method">核心方法论</div>
+        <div class="page-title">三层 Eval 体系：从 Unit Test 到 A/B Test</div>
+        <div class="page-desc">Eval 不是单一活动，而是三个层次的组合。成本递增，使用频率递减，每层各有定位，不可相互替代。</div>
+      </div>
+
+      <div class="pyramid">
+        <div class="pyramid-level pyramid-l3" onclick="document.getElementById('tab-l3').click()">
+          <div class="pyramid-level-title">Level 3: A/B Testing</div>
+          <div class="pyramid-level-sub">成本最高 · 只在产品成熟后 · 验证真实用户行为</div>
+        </div>
+        <div class="pyramid-level pyramid-l2" onclick="document.getElementById('tab-l2').click()">
+          <div class="pyramid-level-title">Level 2: Human & Model Eval</div>
+          <div class="pyramid-level-sub">中等成本 · 定期执行 · 处理无法断言的质量判断</div>
+        </div>
+        <div class="pyramid-level pyramid-l1" onclick="document.getElementById('tab-l1').click()">
+          <div class="pyramid-level-title">Level 1: Unit Tests</div>
+          <div class="pyramid-level-sub">成本最低 · 每次变更都跑 · 覆盖可形式化的约束</div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" id="tab-l1" onclick="switchTab(this, 'content-l1')">Level 1: Unit Tests</div>
+        <div class="tab" id="tab-l2" onclick="switchTab(this, 'content-l2')">Level 2: Human & Model Eval</div>
+        <div class="tab" id="tab-l3" onclick="switchTab(this, 'content-l3')">Level 3: A/B Testing</div>
+      </div>
+
+      <div class="tab-content active" id="content-l1">
+        <div class="prose">
+          <h3>Unit Tests：快速反馈的基础层</h3>
+          <p>Unit Tests 是用代码写的断言（Assertions），在每次代码变更时自动运行。它们不能测所有东西，但能快速捕捉可形式化的失败。</p>
+
+          <h4>设计原则</h4>
+          <ul>
+            <li>按 Feature + Scenario 组织，不要全部混在一起</li>
+            <li>断言要尽量具体，避免只测"有没有返回结果"</li>
+            <li>通过率不需要 100%——多少可接受是产品决策，不是技术决策</li>
+            <li>持续更新：每次在线上发现新的失败模式，就转化为新的 Unit Test</li>
+          </ul>
+        </div>
+
+        <div class="code-block">
+<span class="code-comment"># 示例：客服 AI 的 Unit Tests</span>
+
+<span class="code-keyword">def</span> <span class="code-fn">test_intent_recognition_return</span>():
+    response = ai.chat(<span class="code-string">"我想退款"</span>)
+    <span class="code-keyword">assert</span> response.intent == <span class="code-string">"return_request"</span>
+
+<span class="code-keyword">def</span> <span class="code-fn">test_no_competitor_mention</span>(response):
+    <span class="code-comment"># 通用测试：不得提及竞品</span>
+    competitors = [<span class="code-string">"竞品A"</span>, <span class="code-string">"竞品B"</span>]
+    <span class="code-keyword">for</span> competitor <span class="code-keyword">in</span> competitors:
+        <span class="code-keyword">assert</span> competitor <span class="code-keyword">not in</span> response.text
+
+<span class="code-keyword">def</span> <span class="code-fn">test_policy_query_contains_facts</span>():
+    response = ai.chat(<span class="code-string">"七天无理由退换货政策是什么"</span>)
+    <span class="code-keyword">assert</span> <span class="code-string">"7天"</span> <span class="code-keyword">in</span> response.text <span class="code-keyword">or</span> <span class="code-string">"七天"</span> <span class="code-keyword">in</span> response.text
+    <span class="code-keyword">assert</span> response.token_count &lt; <span class="code-num">500</span>  <span class="code-comment"># 不应该过于冗长</span>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-title">⚠️ 重要：合成测试数据</div>
+          <p>不要等到有真实用户数据才开始写 Unit Tests。可以用 LLM 生成合成的测试输入，覆盖你能预想到的各种 Scenario。生成方法：给 LLM 详细的场景描述，让它生成 50-100 条不同的用户输入。</p>
+        </div>
+      </div>
+
+      <div class="tab-content" id="content-l2">
+        <div class="prose">
+          <h3>Human & Model Eval：质量判断的核心层</h3>
+          <p>Unit Tests 能覆盖的范围有限——很多质量问题无法用断言表达。Human & Model Eval 是处理这类判断的方法。</p>
+
+          <h4>人工评估的流程</h4>
+          <ol>
+            <li>记录 Trace（所有对话都要记录）</li>
+            <li>消除查看 Trace 的摩擦（一屏看到所有相关信息）</li>
+            <li>人工做 Pass/Fail 判断 + 写 Critique</li>
+            <li>分析标注结果，识别系统性失败模式</li>
+          </ol>
+
+          <h4>何时引入 LLM-as-Judge</h4>
+          <p>在有了足够的人工标注数据（至少 30-50 条）之后，可以尝试用 LLM 自动化部分判断。但必须持续验证 LLM Judge 和人类判断的一致性，不一致时以人类判断为准。</p>
+        </div>
+
+        <div class="callout callout-insight">
+          <div class="callout-title">💡 定性信号：什么情况下该扩大人工评估</div>
+          <p>当你发现 LLM Judge 的结论和你直觉不符时；当产品发生重大迭代时；当进入新的用户场景时——这些时候都应该重新做一轮人工评估，重新校准 Judge。</p>
+        </div>
+      </div>
+
+      <div class="tab-content" id="content-l3">
+        <div class="prose">
+          <h3>A/B Testing：验证真实用户行为</h3>
+          <p>A/B Testing 是最贵的评估方式，也是最接近真实业务价值的评估方式。它验证的不是"AI 的回答质量"，而是"这个变化是否真正改变了用户行为或业务结果"。</p>
+
+          <h4>适用时机</h4>
+          <ul>
+            <li>产品已经有稳定的用户基础</li>
+            <li>Level 1 和 Level 2 的 Eval 已经稳定运行</li>
+            <li>有明确的业务指标可以衡量（转化率、留存率、任务完成率）</li>
+            <li>做了重大的产品或模型变更，需要验证真实效果</li>
+          </ul>
+
+          <h4>AI 产品 A/B Test 的注意点</h4>
+          <ul>
+            <li>AI 输出的随机性更大，需要更大的样本量才能达到统计显著性</li>
+            <li>要分清楚"AI 质量提升"和"用户行为变化"——两者不总是同向</li>
+            <li>短期用户行为可能反映新鲜感，而非真实价值</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-title">🧠 章节测验</div>
+          <div class="quiz-score-badge">0/3 答对</div>
+        </div>
+        <div id="quiz-three-levels">
+          <div class="quiz-question" data-correct="2">
+            <div class="quiz-q-num">第 1 题 · 单选</div>
+            <div class="quiz-q-text">三层 Eval 体系中，哪一层的执行频率最高、成本最低？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. A/B Testing</div>
+              <div class="quiz-option">B. Human &amp; Model Eval</div>
+              <div class="quiz-option">C. Unit Tests</div>
+              <div class="quiz-option">D. LLM-as-Judge</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！Unit Tests 是代码断言，在每次变更时自动运行，成本极低，速度最快，是日常快速反馈的基础层。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是C。Unit Tests 可以全自动运行，成本接近零，是三层中频率最高的那一层。A/B Testing 则是成本最高、频率最低的。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 2 题 · 场景题</div>
+            <div class="quiz-q-text">你的客服 AI 上线了，现在想验证新版 Prompt 是否比旧版更好。以下哪个 Eval 方式最合适？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 直接做全流量 A/B Test</div>
+              <div class="quiz-option">B. 先用 Unit Tests 验证没有回退，再对新旧版本做人工采样对比</div>
+              <div class="quiz-option">C. 换用更好的 LLM 模型</div>
+              <div class="quiz-option">D. 观察用户满意度分数</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！对于 Prompt 变更，先跑 Unit Tests 确保没有回退，再通过人工采样对比新旧输出质量，是最合适的验证路径。A/B Test 成本高，适合已经有充分信心时的最终验证。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。分层验证：Unit Tests 防回退，人工对比判断质量提升，A/B Test 只在有充分信心时才用于最终验证。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 3 题 · 判断</div>
+            <div class="quiz-q-text">Unit Tests 的通过率必须达到 100% 才算合格。</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 正确</div>
+              <div class="quiz-option">B. 错误</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！通过率目标是产品决策，不是技术决策。根据业务容忍度，可以接受一定比例的失败。强求 100% 往往导致测试用例越写越宽松，失去意义。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是"错误"。通过率多少是可接受的，由业务优先级和用户影响决定。100% 通过率往往意味着测试不够挑战性。</div>
+          </div>
+        </div>
+        <div class="quiz-result">
+          <div class="quiz-result-score"></div>
+          <div class="quiz-result-msg"></div>
+          <button class="btn-reset">重新作答</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PASS/FAIL -->
+    <div class="page" id="page-passfail">
+      <div class="page-header">
+        <div class="page-tag tag-method">核心方法论</div>
+        <div class="page-title">Pass/Fail vs 评分制：为什么二元判断更好</div>
+        <div class="page-desc">这是一个反直觉的结论，但有扎实的依据。用 1-5 分评估 AI 输出质量，几乎总是个错误。</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">为什么 1-5 分不好用</div>
+        <div class="compare-grid">
+          <div class="compare-card bad">
+            <div class="compare-label">❌ 1-5 分评估制的问题</div>
+            <p>
+              • <strong>没有行动指南</strong>：3 分和 4 分，团队应该做什么不同的事？<br>
+              • <strong>主观差异大</strong>：不同标注者对"3分"的理解不同，数据不可汇总<br>
+              • <strong>倾向于中间值</strong>：标注者会逃避判断，大量结果堆积在 2-4 分<br>
+              • <strong>相关性弱</strong>：每次分析域专家的判断数据，1-5 分指标往往和真正的质量不相关<br>
+              • <strong>维度越多越糟</strong>：同时在 8 个维度上打 1-5 分，既不可靠也不可行
+            </p>
+          </div>
+          <div class="compare-card good">
+            <div class="compare-label">✅ Pass/Fail 的优势</div>
+            <p>
+              • <strong>强迫做判断</strong>：二元选择迫使标注者思考什么是真正的成功条件<br>
+              • <strong>行动清晰</strong>：Fail 就是需要改进，Pass 就是基线达到<br>
+              • <strong>迫使标准外显化</strong>：通过做 Pass/Fail 判断，专家会逐渐说清楚标准是什么<br>
+              • <strong>速度更快</strong>：同样的时间能标注更多数据<br>
+              • <strong>更容易对齐</strong>：两个标注者对 Pass/Fail 的分歧比对分数的分歧更容易解决
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Pass/Fail + Critique 的组合</div>
+        <div class="prose">
+          <p>Pass/Fail 不是简单粗暴的二元。配合 <strong>Critique（评价文字）</strong>，可以同时得到清晰的判断和丰富的细节信息。</p>
+          <p>Critique 的作用：</p>
+          <ul>
+            <li>捕捉"大体上 Pass，但有改进空间"的细节</li>
+            <li>解释为什么 Fail，指向具体的改进方向</li>
+            <li>这些 Critique 后来会成为 LLM Judge Prompt 的 Few-shot 示例</li>
+          </ul>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr><th>用户输入</th><th>AI 回答</th><th>判断</th><th>Critique</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>"我想取消明天的航班"</td>
+              <td>"您的航班已取消，确认邮件已发送。"</td>
+              <td><span class="badge badge-pass">Pass</span></td>
+              <td>完成了用户请求。但应该在取消前要求确认，避免误操作。虽然有这个缺陷，核心目标完成，所以 Pass。</td>
+            </tr>
+            <tr>
+              <td>"我登录不进去，提示密码错误"</td>
+              <td>"请点击'忘记密码'重置密码。"</td>
+              <td><span class="badge badge-fail">Fail</span></td>
+              <td>给了一个通用解决方案，没有询问是否账号被锁定，没有表现出对用户遭遇的理解，体验差。Fail。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <div class="section-title">如果需要追踪细粒度改进怎么办</div>
+        <div class="prose">
+          <p>把大指标拆成多个独立的 Pass/Fail 检查，而不是用评分。</p>
+          <p>例如，不要用"回答质量 1-5 分"，而是拆成：</p>
+          <ul>
+            <li>✅/❌ 是否包含了用户需要的核心信息</li>
+            <li>✅/❌ 是否没有提到不存在的内容</li>
+            <li>✅/❌ 语气是否匹配当前场景</li>
+            <li>✅/❌ 是否在合理的长度范围内</li>
+          </ul>
+          <p>这样你有 4 个可以追踪的指标，每一个都是 Pass/Fail，都有清晰的改进方向。</p>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-title">🧠 章节测验</div>
+          <div class="quiz-score-badge">0/3 答对</div>
+        </div>
+        <div id="quiz-passfail">
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 1 题 · 单选</div>
+            <div class="quiz-q-text">以下哪个是使用 1-5 分制评估 AI 输出的最核心问题？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 计算麻烦</div>
+              <div class="quiz-option">B. 没有行动指南——3分和4分，团队应该做什么不同的事？</div>
+              <div class="quiz-option">C. 数据量不够</div>
+              <div class="quiz-option">D. 需要多个标注者</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！评估的价值在于指导改进行动。1-5分制的最大缺陷是分数和行动之间没有清晰映射——拿到一个3.2分，你下一步该做什么？</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。分数必须能指导行动，否则没有价值。Pass/Fail 直接明确了"需要改进"vs"达到基线"，行动方向清晰。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 2 题 · 场景题</div>
+            <div class="quiz-q-text">产品负责人要求对 AI 客服进行"多维度精细化评估"，要求在 8 个维度上各打 1-5 分。你应该怎么建议？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 接受需求，设计 8 × 5 分的评估表格</div>
+              <div class="quiz-option">B. 建议先做 Error Analysis 找到真正重要的维度，再对每个维度用 Pass/Fail 判断</div>
+              <div class="quiz-option">C. 缩减到最重要的 3 个维度各打 1-5 分</div>
+              <div class="quiz-option">D. 先做 3 个维度，等有经验了再扩展</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！在做 Error Analysis 之前你不知道哪 8 个维度真的重要。建议先从数据中发现真实重要的维度，然后用 Pass/Fail 而非评分制来衡量。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。多维度打分是典型反模式。正确路径：Error Analysis → 找到真实重要的维度 → 每个维度用 Pass/Fail 独立判断。</div>
+          </div>
+          <div class="quiz-question" data-correct="0">
+            <div class="quiz-q-num">第 3 题 · 判断</div>
+            <div class="quiz-q-text">Pass/Fail 加上 Critique（评价文字），可以同时获得清晰判断和细节信息。</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 正确</div>
+              <div class="quiz-option">B. 错误</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！Pass/Fail 提供清晰的二元判断，Critique 补充具体原因和改进方向。这个组合是最高效的标注方式，Critique 后来还能成为 LLM Judge 的 Few-shot 示例。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是"正确"。Pass/Fail + Critique 是标准的标注组合：二元判断提供清晰信号，文字评价提供细节，两者互补。</div>
+          </div>
+        </div>
+        <div class="quiz-result">
+          <div class="quiz-result-score"></div>
+          <div class="quiz-result-msg"></div>
+          <button class="btn-reset">重新作答</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPERT -->
+    <div class="page" id="page-expert">
+      <div class="page-header">
+        <div class="page-tag tag-method">核心方法论</div>
+        <div class="page-title">领域专家与数据标注：谁来判断"好"</div>
+        <div class="page-desc">Eval 系统里最常被忽视的问题：谁来标注数据？答案比你想的简单，也比你想的重要。</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Benevolent Dictator（仁慈独裁者）模型</div>
+        <div class="callout callout-insight">
+          <div class="callout-title">💡 核心建议</div>
+          <p>找一个熟悉你的用户和业务的领域专家，由他/她来做最终质量判断。不需要多人投票，不需要共识机制。<strong>一个真正懂业务的人，胜过五个不懂的人投票。</strong></p>
+        </div>
+
+        <div class="prose">
+          <h3>为什么不用多人标注？</h3>
+          <ul>
+            <li>多人标注会带来分歧，而分歧不是数据，是噪音</li>
+            <li>解决分歧需要额外流程，拖慢迭代</li>
+            <li>如果评判标准不统一，多人标注比单人标注还不可靠</li>
+          </ul>
+
+          <h3>Benevolent Dictator 的要求</h3>
+          <ul>
+            <li>深度理解目标用户（最好自己就是代表用户）</li>
+            <li>清楚业务目标和约束</li>
+            <li>能够清晰解释自己的判断（不是凭感觉）</li>
+            <li>愿意投入时间：不需要很多，但需要持续参与</li>
+          </ul>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr><th>场景</th><th>理想的 Benevolent Dictator</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>心理健康 AI 助手</td><td>心理咨询师 / 心理学家</td></tr>
+            <tr><td>法律文档分析 AI</td><td>相关领域律师</td></tr>
+            <tr><td>客服 AI</td><td>客服运营负责人</td></tr>
+            <tr><td>教育 AI 工具</td><td>有经验的教师 / 课程设计师</td></tr>
+            <tr><td>AI 产品（你的场景）</td><td>深度理解用户且有产品判断力的产品负责人</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <div class="section-title">不要外包标注</div>
+        <div class="callout callout-danger">
+          <div class="callout-title">⛔ 反模式</div>
+          <p>把数据标注外包给不了解业务的人，是最常见的 Eval 失败原因之一。外包的人按通用标准打分，但你的业务有自己独特的"好"的定义。外包标注数据质量低，还会误导你的 LLM Judge 训练方向。<br><br>
+          <strong>唯一例外：</strong>纯机械性任务——比如验证邮箱格式是否正确、数字是否在合理范围内。</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">PM 和工程师如何分工</div>
+        <table class="data-table">
+          <thead>
+            <tr><th>阶段</th><th>PM 负责</th><th>工程师负责</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>初期建立标准</td>
+              <td>一起看数据，建立共同的"好"的认知</td>
+              <td>一起看数据，理解技术失败模式</td>
+            </tr>
+            <tr>
+              <td>持续标注</td>
+              <td>产品质量判断（用户体验、目标达成）</td>
+              <td>技术问题排查（检索失败、工具错误）</td>
+            </tr>
+            <tr>
+              <td>长期</td>
+              <td>主导 Benevolent Dictator 角色，定义质量标准</td>
+              <td>维护 Eval 基础设施，优化判断自动化</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-title">🧠 章节测验</div>
+          <div class="quiz-score-badge">0/3 答对</div>
+        </div>
+        <div id="quiz-expert">
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 1 题 · 单选</div>
+            <div class="quiz-q-text">Benevolent Dictator 模型的核心主张是什么？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 多人投票取平均分，保证客观性</div>
+              <div class="quiz-option">B. 找一个真正懂用户和业务的专家做最终质量判断</div>
+              <div class="quiz-option">C. 让用户自己评价 AI 的回答</div>
+              <div class="quiz-option">D. 由专家委员会集体审核</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！一个真正懂业务的人的判断，比五个不懂的人投票更可靠。多人投票带来的是噪音而非准确性，除非每个人的判断标准已经完全对齐。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。"仁慈独裁者"不是专制，而是确保判断标准的一致性。业务专家对"好"的定义最接近真实用户需求。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 2 题 · 判断</div>
+            <div class="quiz-q-text">把数据标注外包给专业的标注公司，可以获得高质量、中立的 Ground Truth 数据。</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 正确</div>
+              <div class="quiz-option">B. 错误</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！标注公司的人用通用标准打分，但你的业务有独特的"好"的定义。外包标注不只是质量差，而且会系统性地误导你的 LLM Judge 校准方向——是负价值。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是"错误"。外包标注的根本问题是：标注者不理解你的业务上下文，无法做出符合业务需求的判断。这类数据会污染你的评估体系。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 3 题 · 场景题</div>
+            <div class="quiz-q-text">你在做一个医疗问诊 AI 的评估体系，应该选谁来担任 Benevolent Dictator？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 产品经理</div>
+              <div class="quiz-option">B. 有丰富临床经验的医生</div>
+              <div class="quiz-option">C. 医院信息化部门的工程师</div>
+              <div class="quiz-option">D. 经过培训的数据标注员</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！医疗问诊 AI 的"好"的定义需要临床医学知识——知道什么答案是医学上准确的、安全的、符合诊疗规范的。只有临床医生能做出可信的判断。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。Benevolent Dictator 必须是能判断"什么是好的医疗回答"的人。这个场景下，临床医生是唯一合适的人选。</div>
+          </div>
+        </div>
+        <div class="quiz-result">
+          <div class="quiz-result-score"></div>
+          <div class="quiz-result-msg"></div>
+          <button class="btn-reset">重新作答</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LLM JUDGE -->
+    <div class="page" id="page-judge">
+      <div class="page-header">
+        <div class="page-tag tag-advanced">进阶专题</div>
+        <div class="page-title">LLM-as-a-Judge：Critique Shadowing 方法论</div>
+        <div class="page-desc">如何建立一个能自动化评判 AI 输出质量、且与人类判断高度一致的 LLM 评判系统。</div>
+      </div>
+
+      <div class="callout callout-warning">
+        <div class="callout-title">⚠️ 先决条件</div>
+        <p>在开始建 LLM Judge 之前，你必须已经完成了 Error Analysis，有了 30 条以上的人工 Pass/Fail + Critique 标注。没有这些，LLM Judge 没有对齐的基础，建了也是错的。</p>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Critique Shadowing：7 步流程</div>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">找到 Principal Domain Expert</div>
+              <div class="step-desc">确定 Benevolent Dictator，他的判断是 Ground Truth。</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">构建有代表性的数据集</div>
+              <div class="step-desc">覆盖真实用户场景（Feature × Scenario × Persona），至少 30 条，越多越好。真实数据 + 合成数据结合。</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">人工做 Pass/Fail + Critique</div>
+              <div class="step-desc">专家对每个交互写详细的评价，解释为什么 Pass 或 Fail。这些 Critique 就是你 LLM Judge Prompt 的素材。</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <div class="step-title">修复明显的系统错误</div>
+              <div class="step-desc">先把人工评估发现的明显失败修掉，再建 Judge。Judge 是为了扩大你的感知范围，不是为了掩盖已知问题。</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              <div class="step-title">迭代构建 LLM Judge Prompt</div>
+              <div class="step-desc">把人工 Critique 作为 Few-shot 示例，写 Judge Prompt。跑数据，对比 Judge 的判断和人工判断，迭代直到一致性足够高。</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">6</div>
+            <div class="step-body">
+              <div class="step-title">Error Analysis（再次）</div>
+              <div class="step-desc">现在有了自动化 Judge，可以大规模分析失败模式了。把分类结果反馈给专家验证，迭代分类体系。</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">7</div>
+            <div class="step-body">
+              <div class="step-title">创建专项 Judge（如需要）</div>
+              <div class="step-desc">如果某个特定的失败类型需要更精细的判断，单独为它创建一个专项 Judge，而不是让一个通用 Judge 负责所有事情。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Judge Prompt 的关键要素</div>
+        <div class="code-block">
+<span class="code-comment"># LLM Judge Prompt 结构模板</span>
+
+You are a [领域] 质量评估专家，负责判断 AI 的回答是否达到预期效果。
+
+<span class="code-comment">## 评判标准</span>
+{{guidelines}}  <span class="code-comment"># 从 Critique 中提炼出的具体标准</span>
+
+<span class="code-comment">## 示例评判（Few-shot，直接来自人工标注）</span>
+
+&lt;example-1&gt;
+  &lt;input&gt;[用户输入]&lt;/input&gt;
+  &lt;response&gt;[AI 回答]&lt;/response&gt;
+  &lt;critique&gt;
+    判断: Pass
+    原因: [从人工 Critique 原文改写]
+  &lt;/critique&gt;
+&lt;/example-1&gt;
+
+&lt;example-2&gt;
+  <span class="code-comment"># 一个 Fail 的例子，且要求 critique 足够详细</span>
+&lt;/example-2&gt;
+
+<span class="code-comment">## 待评估的交互</span>
+&lt;input&gt;{{user_input}}&lt;/input&gt;
+&lt;response&gt;{{ai_response}}&lt;/response&gt;
+
+<span class="code-comment">## 输出格式</span>
+{
+  "outcome": "pass" | "fail",
+  "critique": "[详细解释]"
+}
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">常见的 LLM Judge 错误</div>
+        <div class="prose">
+          <ul>
+            <li><strong>用 off-the-shelf Judge</strong>（如直接用 GPT 的通用评估 API）：这些 Judge 不知道你的业务标准，输出结果不可信</li>
+            <li><strong>Critique 太简短</strong>："回答不够准确" 这样的 Critique 不够用，要具体到"哪里不准确，为什么不对"</li>
+            <li><strong>不验证一致性</strong>：建完 Judge 之后不持续对比人类判断，任凭 Judge 漂移</li>
+            <li><strong>Judge 用的模型太弱</strong>：评判是推理密集任务，用强模型（比生产用的模型更强），可以接受慢一点</li>
+            <li><strong>Criteria Drift</strong>：评判标准是在做判断的过程中逐渐明确的，不可能在开始前就完全定义好——接受这个事实，持续迭代标准</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-title">🧠 章节测验</div>
+          <div class="quiz-score-badge">0/3 答对</div>
+        </div>
+        <div id="quiz-judge">
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 1 题 · 单选</div>
+            <div class="quiz-q-text">在开始构建 LLM Judge 之前，最重要的先决条件是什么？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 选好评判用的 LLM 模型</div>
+              <div class="quiz-option">B. 先积累至少 30 条人工 Pass/Fail + Critique 标注数据</div>
+              <div class="quiz-option">C. 完成技术架构设计</div>
+              <div class="quiz-option">D. 把 LLM Judge 的 Prompt 写好</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！LLM Judge 需要"对齐"人类判断才可信。没有人工标注的 Ground Truth，Judge 对齐的是什么？必须先有人工标注，才有校准的基础。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。LLM Judge 是人工判断的放大器，放大的前提是先有"人工判断基线"。没有这个基线，LLM Judge 就是在放大随机噪音。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 2 题 · 单选</div>
+            <div class="quiz-q-text">Critique Shadowing 方法的核心思路是什么？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 用更强的 LLM 来评判更弱的 LLM</div>
+              <div class="quiz-option">B. 把专家写的详细 Critique 作为 LLM Judge Prompt 的 Few-shot 示例</div>
+              <div class="quiz-option">C. 让 LLM 模仿专家的写作风格</div>
+              <div class="quiz-option">D. 用多个 LLM 投票取共识</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！专家的 Critique 包含了他们的判断逻辑和标准，把这些作为 Few-shot 示例，让 LLM 学习同样的判断逻辑，是 Critique Shadowing 的精髓。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。"Shadowing"的意思是让 LLM "跟随"专家的判断方式。专家的 Critique 是这个传授过程的载体。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 3 题 · 场景题</div>
+            <div class="quiz-q-text">你的 LLM Judge 构建好了，Pass Rate 一直在 95% 以上，感觉很稳定。你的下一步应该是什么？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 可以放心扩大规模，全面替代人工评估</div>
+              <div class="quiz-option">B. 定期抽样人工验证 Judge 的判断和专家判断是否仍然一致</div>
+              <div class="quiz-option">C. 尝试把 Pass Rate 提升到 100%</div>
+              <div class="quiz-option">D. 换用更便宜的模型来降低成本</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！LLM Judge 可能随时间"漂移"——产品变化、用户行为变化都会让 Judge 和真实业务标准产生偏差。持续的人工抽样验证是保持 Judge 可信度的唯一方法。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。LLM Judge 不是一劳永逸的，需要持续校验。95% 的高 Pass Rate 本身也值得怀疑——可能是 Judge 的标准太宽松了。</div>
+          </div>
+        </div>
+        <div class="quiz-result">
+          <div class="quiz-result-score"></div>
+          <div class="quiz-result-msg"></div>
+          <button class="btn-reset">重新作答</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DATASET -->
+    <div class="page" id="page-dataset">
+      <div class="page-header">
+        <div class="page-tag tag-advanced">进阶专题</div>
+        <div class="page-title">数据集构建：Feature × Scenario × Persona</div>
+        <div class="page-desc">好的 Eval 数据集需要有代表性——不是随机采样，而是有意识地覆盖你的 AI 可能面对的各种情况。</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">三个维度定义覆盖范围</div>
+        <table class="data-table">
+          <thead>
+            <tr><th>维度</th><th>定义</th><th>示例</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Feature</strong></td>
+              <td>AI 的具体功能模块</td>
+              <td>意图识别、政策查询、退款处理、情绪识别</td>
+            </tr>
+            <tr>
+              <td><strong>Scenario</strong></td>
+              <td>AI 需要处理的情况类型</td>
+              <td>歧义输入、无匹配结果、多个结果、系统错误、信息缺失</td>
+            </tr>
+            <tr>
+              <td><strong>Persona</strong></td>
+              <td>代表性的用户类型</td>
+              <td>新用户、专业用户、非母语用户、情绪激动的用户</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-warning">
+          <div class="callout-title">⚠️ 注意</div>
+          <p>这个三维框架不是通用标准，是一种组织思路。如果你的场景用户不直接和 AI 交互（比如自动化流水线），Persona 维度可能不适用。根据你的实际业务定义有意义的维度。</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">合成数据生成</div>
+        <div class="prose">
+          <p>不要等到有足够的真实用户数据才开始 Eval。合成数据可以作为很好的起点，覆盖你预想的各种组合。</p>
+          <p>重要原则：<strong>只用 LLM 生成用户输入，不用 LLM 生成 AI 回答</strong>。把合成的用户输入喂给你自己的 AI 系统，让系统生成回答，然后对这些真实的 AI 回答进行评估。</p>
+        </div>
+
+        <div class="code-block">
+<span class="code-comment"># 合成用户输入的 Prompt 模板</span>
+
+生成 30 个不同的用户输入，满足以下条件：
+- Feature: [具体功能，如"退款申请"]
+- Scenario: [场景类型，如"用户没有提供订单号"]
+- Persona: [用户类型，如"情绪激动的用户"]
+
+要求：
+- 用自然语言，不同长度和表达方式
+- 包含真实用户会犯的错误（错别字、不完整信息）
+- 输出 JSON 数组格式
+
+示例输出：
+[
+  <span class="code-string">"我昨天买的东西想退，但是我找不到订单号了"</span>,
+  <span class="code-string">"这东西质量太差了！！！必须给我退款"</span>,
+  ...
+]
+        </div>
+
+        <div class="quote">
+          <p>"LLMs 在生成多样化的用户输入方面出乎意料地好。这听起来像蛇在吃自己的尾巴，但它确实有效——ship it。"</p>
+          <cite>— Bryan Bischof, Head of AI Engineering at Hex</cite>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">数据集规模建议</div>
+        <div class="prose">
+          <ul>
+            <li><strong>最小起步</strong>：每个 Feature × Scenario 组合至少 1 个样本</li>
+            <li><strong>实用目标</strong>：30-50 条人工标注数据作为 LLM Judge 的校准集</li>
+            <li><strong>何时停止扩大</strong>：当新的数据不再触发新的失败模式（理论饱和）</li>
+            <li><strong>动态更新</strong>：每次上线发现新的失败，就加入数据集；数据集是活的，不是一次性的</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-title">🧠 章节测验</div>
+          <div class="quiz-score-badge">0/3 答对</div>
+        </div>
+        <div id="quiz-dataset">
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 1 题 · 单选</div>
+            <div class="quiz-q-text">构建 Eval 数据集时，覆盖范围的三个核心维度是什么？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 数量、质量、多样性</div>
+              <div class="quiz-option">B. Feature、Scenario、Persona</div>
+              <div class="quiz-option">C. 训练集、验证集、测试集</div>
+              <div class="quiz-option">D. 简单题、中等题、难题</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！Feature（功能模块）× Scenario（情况类型）× Persona（用户类型）的三维框架，确保数据集有业务代表性，覆盖真实使用情况。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。这三个维度来自业务视角，不是机器学习的通用框架。每个维度都有具体的业务含义，组合起来覆盖真实用户场景。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 2 题 · 判断</div>
+            <div class="quiz-q-text">可以用 LLM 生成合成的 AI 回答，来扩充 Eval 数据集。</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 正确</div>
+              <div class="quiz-option">B. 错误</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！应该只用 LLM 生成合成的用户输入，然后把这些输入喂给你真实的 AI 系统，让系统生成回答，再对这些真实回答进行评估。用 LLM 生成回答会绕过你的实际系统，评估的不是真实产品。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是"错误"。只用 LLM 生成用户输入，不生成 AI 回答。AI 回答必须来自你真实的 AI 系统，因为你评估的是你的系统的实际表现。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 3 题 · 场景题</div>
+            <div class="quiz-q-text">你的 Eval 数据集已有 200 条，每次新增数据后 LLM Judge 的 Pass Rate 基本没有变化。你应该怎么做？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 继续增加数据到 500 条</div>
+              <div class="quiz-option">B. 检查是否已达到理论饱和——新数据是否不再触发新的失败类别</div>
+              <div class="quiz-option">C. 换用更强的 Judge 模型</div>
+              <div class="quiz-option">D. 精简到最有代表性的 50 条</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！Pass Rate 稳定可能意味着理论饱和，也可能意味着数据同质化。关键是检查新数据是否引入了新的失败模式——如果没有，数量足够了；如果有，继续加。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。数据集的质量目标是覆盖所有重要的失败模式，而不是达到某个数量目标。理论饱和是更有意义的停止标准。</div>
+          </div>
+        </div>
+        <div class="quiz-result">
+          <div class="quiz-result-score"></div>
+          <div class="quiz-result-msg"></div>
+          <button class="btn-reset">重新作答</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RAG -->
+    <div class="page" id="page-rag">
+      <div class="page-header">
+        <div class="page-tag tag-advanced">进阶专题</div>
+        <div class="page-title">RAG 的评估：检索和生成要分开看</div>
+        <div class="page-desc">RAG 系统有两个可能失败的地方，失败原因不同，解法也不同。混在一起评估等于什么都看不清楚。</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">RAG 的两层失败</div>
+        <div class="compare-grid">
+          <div class="compare-card">
+            <div class="compare-label">📚 检索失败</div>
+            <p>
+              知识库里有正确答案，但没有检索到；或者检索到了，但质量差的文档把好的文档稀释了。<br><br>
+              <strong>症状：</strong>回答模糊、不完整，或者"根据提供的信息，我无法回答"。<br>
+              <strong>解法：</strong>改进 Embedding 模型、调整检索参数、优化知识库结构。
+            </p>
+          </div>
+          <div class="compare-card">
+            <div class="compare-label">🤖 生成失败</div>
+            <p>
+              检索到了正确内容，但模型没有正确利用，或者超出检索内容进行了幻觉扩展。<br><br>
+              <strong>症状：</strong>回答里有检索内容，但有错误解读；或者在检索内容基础上"发挥"了不存在的内容。<br>
+              <strong>解法：</strong>改进 Prompt 对上下文的利用指令、增加引用约束。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">RAG Eval 框架</div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>评估维度</th>
+              <th>问题</th>
+              <th>评估方法</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>检索召回率</strong></td>
+              <td>正确答案所在的文档有没有被召回？</td>
+              <td>构建包含 Ground Truth 文档 ID 的测试集，检查是否在 Top-K 结果里</td>
+            </tr>
+            <tr>
+              <td><strong>检索精确率</strong></td>
+              <td>召回的文档有多少是有用的？</td>
+              <td>人工或 LLM Judge 评估每个检索结果与 Query 的相关性</td>
+            </tr>
+            <tr>
+              <td><strong>答案忠实度</strong></td>
+              <td>生成的回答有没有超出检索内容？</td>
+              <td>LLM Judge 判断：回答中的每个声明是否都能在检索内容中找到支持</td>
+            </tr>
+            <tr>
+              <td><strong>答案完整度</strong></td>
+              <td>用户需要的信息是否都包含在回答里？</td>
+              <td>对比 Ground Truth 答案，人工或 LLM Judge 判断</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-insight">
+          <div class="callout-title">💡 最重要的一步</div>
+          <p>在分析 RAG 失败时，先做一个简单判断：<strong>如果把正确的检索内容直接给模型，它能给出正确答案吗？</strong>如果能，问题在检索；如果还是不能，问题在生成。这个二分法能节省大量调试时间。</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">知识库质量的重要性</div>
+        <div class="prose">
+          <p>很多 RAG 系统的问题不在检索算法，而在知识库本身：文档质量参差不齐，重复内容多，更新不及时，缺少对特定业务场景的覆盖。</p>
+          <p>对于业务场景有明确约束的场景（如游戏 AI 必须符合游戏世界观设定，不能混入其他游戏的内容），知识库的准确性和覆盖度比检索算法更重要。</p>
+          <p>这也是为什么 QA 对、业务知识库的数据体量和质量，在 AI 应用里仍然非常重要——它是 AI 能够在边界内准确回答的基础。</p>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-title">🧠 章节测验</div>
+          <div class="quiz-score-badge">0/3 答对</div>
+        </div>
+        <div id="quiz-rag">
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 1 题 · 单选</div>
+            <div class="quiz-q-text">评估 RAG 系统时，应该最先做的诊断是什么？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 检查 Embedding 模型的质量</div>
+              <div class="quiz-option">B. 判断失败是检索失败还是生成失败</div>
+              <div class="quiz-option">C. 评估回答的语言流畅度</div>
+              <div class="quiz-option">D. 测量端到端的延迟</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！先用二分法定位失败源头：如果给模型正确内容它能答对，问题在检索；如果给了正确内容还是答错，问题在生成。两个层次的解法完全不同，必须先分清楚。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。先二分，再定向改进。检索失败 vs 生成失败，解法不同：前者改检索，后者改 Prompt 或模型。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 2 题 · 判断</div>
+            <div class="quiz-q-text">RAG 系统的核心问题几乎都出在检索算法上，优化 Embedding 模型是首要任务。</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 正确</div>
+              <div class="quiz-option">B. 错误</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！很多 RAG 系统的问题出在知识库本身——文档质量差、覆盖不全、内容过期、重复冗余。在改检索算法之前，应该先检查知识库质量。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是"错误"。知识库质量（文档内容准确、覆盖完整、无重复矛盾）往往比检索算法更重要。垃圾进，垃圾出。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 3 题 · 场景题</div>
+            <div class="quiz-q-text">用户反馈 AI 给出了一个和实际政策不符的答案。你的第一步诊断应该是什么？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 立即换用更强的生成模型</div>
+              <div class="quiz-option">B. 检查这个问题对应的文档有没有被正确检索到</div>
+              <div class="quiz-option">C. 修改 System Prompt，加入更多约束</div>
+              <div class="quiz-option">D. 把这个案例加入 Fine-tune 数据</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！先确认检索层有没有问题——正确的政策文档有没有被召回？如果没有，改检索；如果召回了但答错，再看生成层。不能在不知道根因的情况下盲目修改。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。诊断顺序：检索层 → 生成层。先确认检索到了正确文档，再看模型有没有正确利用。否则改错了地方，问题依然存在。</div>
+          </div>
+        </div>
+        <div class="quiz-result">
+          <div class="quiz-result-score"></div>
+          <div class="quiz-result-msg"></div>
+          <button class="btn-reset">重新作答</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCTION -->
+    <div class="page" id="page-production">
+      <div class="page-header">
+        <div class="page-tag tag-advanced">进阶专题</div>
+        <div class="page-title">生产环境监控：CI/CD 之外的持续评估</div>
+        <div class="page-desc">上线不是终点，是 Eval 工作的开始。生产环境里的真实用户数据，是你永远无法在测试环境里复现的。</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">CI/CD Eval vs 生产监控：两件不同的事</div>
+        <table class="data-table">
+          <thead>
+            <tr><th></th><th>CI/CD Eval</th><th>生产环境监控</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>触发时机</strong></td>
+              <td>每次代码/Prompt 变更时</td>
+              <td>持续运行，或定期采样</td>
+            </tr>
+            <tr>
+              <td><strong>目标</strong></td>
+              <td>防止已知失败模式回退</td>
+              <td>发现新的、未知的失败模式</td>
+            </tr>
+            <tr>
+              <td><strong>数据来源</strong></td>
+              <td>固定测试集</td>
+              <td>真实用户数据</td>
+            </tr>
+            <tr>
+              <td><strong>速度要求</strong></td>
+              <td>要快（阻塞发布流程）</td>
+              <td>可以慢（异步分析）</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Guardrail vs Evaluator</div>
+        <div class="compare-grid">
+          <div class="compare-card">
+            <div class="compare-label">🛡️ Guardrail</div>
+            <p>
+              <strong>实时拦截</strong>：在 AI 输出之前或之后立即执行判断，阻止有害内容触达用户。<br><br>
+              要求：低延迟（毫秒级），高精确率（宁可误报，不能漏报）。<br><br>
+              示例：内容安全检查、PII 泄露检测、竞品提及检查。
+            </p>
+          </div>
+          <div class="compare-card">
+            <div class="compare-label">📊 Evaluator</div>
+            <p>
+              <strong>事后分析</strong>：在交互完成后评估质量，用于改进系统，不直接影响用户体验。<br><br>
+              要求：高质量（准确反映质量），可以慢一点。<br><br>
+              示例：回答相关性评估、任务完成度判断、用户满意度预测。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">生产 Error Analysis 的频率建议</div>
+        <div class="prose">
+          <ul>
+            <li><strong>每次重大变更后</strong>：Prompt 大改、模型升级、新 Feature 上线——必须重新做一轮完整的 Error Analysis</li>
+            <li><strong>每周常规</strong>：随机抽取 10-20 条真实 Trace 阅读，重点关注异常对话（特别长、多次重试、有用户投诉标记的）</li>
+            <li><strong>每月系统性回顾</strong>：系统化分析一段时间内的失败分布，更新失败分类体系</li>
+          </ul>
+
+          <p>一个实用的停止标准：<strong>直到你不再从新数据里学到新东西</strong>。这个信号比固定的时间频率更准确。</p>
+        </div>
+
+        <div class="callout callout-insight">
+          <div class="callout-title">💡 反直觉：100% Pass Rate 是警告信号</div>
+          <p>如果你的生产 Eval Pass Rate 达到 100%，很可能是你的 Eval 不够难，在给自己制造虚假安全感。70% 的 Pass Rate 可能更真实地反映了系统的实际水平，也是更有价值的工作起点。</p>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-title">🧠 章节测验</div>
+          <div class="quiz-score-badge">0/3 答对</div>
+        </div>
+        <div id="quiz-production">
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 1 题 · 单选</div>
+            <div class="quiz-q-text">Guardrail 和 Evaluator 的核心区别是什么？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. Guardrail 更准确，Evaluator 更快</div>
+              <div class="quiz-option">B. Guardrail 实时拦截有害输出，Evaluator 事后分析质量</div>
+              <div class="quiz-option">C. Guardrail 用规则，Evaluator 用 LLM</div>
+              <div class="quiz-option">D. Guardrail 针对安全，Evaluator 针对语言质量</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！Guardrail 在交互发生时实时介入，防止有害输出触达用户，要求低延迟；Evaluator 在事后分析质量，用于改进系统，可以慢一些但要准确。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。这是时序上的区别：Guardrail 是实时防护，Evaluator 是事后学习。两者都需要，目的不同。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 2 题 · 判断</div>
+            <div class="quiz-q-text">生产环境的 Eval Pass Rate 达到 100% 是最理想的状态。</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 正确</div>
+              <div class="quiz-option">B. 错误</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！100% Pass Rate 几乎总是说明 Eval 不够难，在给自己制造虚假安全感。持续发现失败才是 Eval 的价值所在。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是"错误"。100% Pass Rate = Eval 标准太宽松。好的 Eval 系统应该持续发现真实问题，而不是全部通过。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 3 题 · 场景题</div>
+            <div class="quiz-q-text">你的 AI 产品做了一次重大的 Prompt 重构，上线前应该怎么做 Eval？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 只跑 Unit Tests，通过就上线</div>
+              <div class="quiz-option">B. 先跑 Unit Tests 防回退，再做人工抽样对比新旧版本，有充分信心再考虑 A/B Test</div>
+              <div class="quiz-option">C. 直接上线，观察用户反馈</div>
+              <div class="quiz-option">D. 让 LLM Judge 对所有历史 Trace 重新评分</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！重大变更需要分层验证：Unit Tests（防已知失败回退）→ 人工抽样对比（判断整体质量变化）→ A/B Test（验证真实用户行为，成本高，非必须）。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。分层验证是正确路径。只跑 Unit Tests 不够，因为只覆盖已知失败；只看用户反馈太慢，损害已经发生了再补救。</div>
+          </div>
+        </div>
+        <div class="quiz-result">
+          <div class="quiz-result-score"></div>
+          <div class="quiz-result-msg"></div>
+          <button class="btn-reset">重新作答</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MISTAKES -->
+    <div class="page" id="page-mistakes">
+      <div class="page-header">
+        <div class="page-tag tag-practice">落地实践</div>
+        <div class="page-title">常见错误与反模式</div>
+        <div class="page-desc">这些错误在每个团队里都会出现。识别它们，比知道正确做法更重要。</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">7 个最贵的 Eval 错误</div>
+
+        <div class="callout callout-danger">
+          <div class="callout-title">❌ 错误 1：使用 Generic 评估指标</div>
+          <p>BERTScore、ROUGE、Cosine Similarity……这些指标测的是抽象的文本相似度，和你的业务目标没有直接关系。高分不代表产品好用，低分不代表产品差。停止使用它们，除非你的场景真的就是文本相似度（比如 RAG 检索质量初步筛选）。</p>
+        </div>
+
+        <div class="callout callout-danger">
+          <div class="callout-title">❌ 错误 2：Eval-Driven Development（提前定义所有 Eval）</div>
+          <p>在实际用户数据出现之前，你无法预判 LLM 会以什么方式失败。提前写好所有 Eval，测的是你想象中的失败，不是真实的失败。正确做法：先上线（哪怕是小规模），看真实数据，再设计 Eval。<br><strong>例外：</strong>有非常明确的硬性约束（"绝对不能提到竞品"），可以提前写。</p>
+        </div>
+
+        <div class="callout callout-danger">
+          <div class="callout-title">❌ 错误 3：跳过人工评估，直接上自动化</div>
+          <p>LLM Judge 是人工判断的放大器，不是替代品。没有人工标注的 Ground Truth，LLM Judge 对齐的是什么？是对什么、基于什么标准？必须先建立人工判断基线，才能构建可信的自动化评估。</p>
+        </div>
+
+        <div class="callout callout-danger">
+          <div class="callout-title">❌ 错误 4：外包数据标注给不了解业务的人</div>
+          <p>外包标注者按通用标准打分，但你的业务有独特的"好"的定义。他们的标注不只是质量差，而且会系统性地误导你的 LLM Judge 校准方向——是负的价值，不只是零价值。</p>
+        </div>
+
+        <div class="callout callout-danger">
+          <div class="callout-title">❌ 错误 5：用 1-5 分评估维度来堆砌指标</div>
+          <p>"业务方说要评估 8 个维度，每个维度打 1-5 分。" 如果有人这么说，说明他们还不知道自己在找什么。由 Benevolent Dictator 做 Pass/Fail 判断，从数据里找到真正重要的维度，而不是事先假设 8 个都重要。</p>
+        </div>
+
+        <div class="callout callout-danger">
+          <div class="callout-title">❌ 错误 6：不看数据，只看指标仪表盘</div>
+          <p>仪表盘告诉你数字，数字告诉你有问题，但不告诉你问题是什么。任何 Eval 系统都不能替代直接阅读失败案例。人工阅读数据是保持对系统真实状态感知的唯一方式，也是发现新问题的起点。</p>
+        </div>
+
+        <div class="callout callout-danger">
+          <div class="callout-title">❌ 错误 7：100% Pass Rate 就停止迭代</div>
+          <p>Pass Rate 100% 几乎总是说明你的 Eval 不够难，不是说明你的系统真的完美。持续更新测试用例，纳入新发现的失败案例，让你的 Eval 持续保持挑战性。</p>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-title">🧠 章节测验</div>
+          <div class="quiz-score-badge">0/3 答对</div>
+        </div>
+        <div id="quiz-mistakes">
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 1 题 · 单选</div>
+            <div class="quiz-q-text">以下哪个是正确做法，不属于 Eval 反模式？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 用 BERTScore 作为主要评估指标</div>
+              <div class="quiz-option">B. 先做 Error Analysis，再设计业务专属的 Pass/Fail Eval</div>
+              <div class="quiz-option">C. 把数据标注外包给不了解业务的人</div>
+              <div class="quiz-option">D. 没有真实数据就提前定义好所有 Eval 指标</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！Error Analysis → 业务专属 Pass/Fail Eval 是正确路径，不是反模式。其他三个都是经典反模式。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。先做 Error Analysis、再设计业务专属的 Pass/Fail Eval，是整个知识体系推荐的正确做法。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 2 题 · 场景题</div>
+            <div class="quiz-q-text">你的团队发现生产 Eval 的 Pass Rate 一直是 98%，但用户投诉没有减少。最可能的原因是什么？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 用户的期望太高</div>
+              <div class="quiz-option">B. Eval 的标准太宽松，没有覆盖真正影响用户的失败类型</div>
+              <div class="quiz-option">C. 需要更多用户教育</div>
+              <div class="quiz-option">D. 模型能力不足</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！Eval 指标和用户体验脱节，是评估体系设计有问题——要么标准太宽松，要么测的不是真正影响用户的失败类型。需要回头做 Error Analysis，重新校准评估体系。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。Eval Pass Rate 高但用户不满意 = 测的不是对的东西。指标和业务脱节，需要重新设计 Eval 的覆盖范围和判断标准。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 3 题 · 判断</div>
+            <div class="quiz-q-text">Eval-Driven Development（在产品上线前提前设计所有 Eval 指标）是 AI 产品开发的最佳实践。</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 正确</div>
+              <div class="quiz-option">B. 错误</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！在真实用户数据出现之前，你无法预判 LLM 会以什么方式失败。提前定义所有指标，测的是想象中的失败，不是真实失败。先上线，看数据，再设计 Eval。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是"错误"。Eval-Driven Development 是反模式。LLM 的失败方式无法完全预判，必须看真实数据后才能设计有意义的 Eval。</div>
+          </div>
+        </div>
+        <div class="quiz-result">
+          <div class="quiz-result-score"></div>
+          <div class="quiz-result-msg"></div>
+          <button class="btn-reset">重新作答</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PM VIEW -->
+    <div class="page" id="page-pm">
+      <div class="page-header">
+        <div class="page-tag tag-practice">落地实践</div>
+        <div class="page-title">产品经理的 Eval 视角</div>
+        <div class="page-desc">Eval 不只是工程问题。PM 的判断力是整个 Eval 体系里最核心的输入——没有之一。</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">PM 是天然的 Benevolent Dictator</div>
+        <div class="callout callout-insight">
+          <div class="callout-title">💡 为什么 PM 应该主导 Eval 标准</div>
+          <p>技术团队能告诉你模型的通用能力，但只有你知道：用户在什么条件下提问、什么叫足够好的答案、什么程度的失败是可以接受的、什么样的失败会毁掉整个体验。这些判断没有人比 PM 更有资格做。</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">PM 在 Eval 中的具体职责</div>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">定义"好"的标准</div>
+              <div class="step-desc">
+                明确说出用户在什么情况下会认为 AI 回答足够好，什么情况下会失望。这个标准不能只停留在"直觉"里，需要在 Error Analysis 过程中被显式化出来。PM 做的每一次 Pass/Fail 判断，都是在把这个标准从隐性变成显性。
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">把产品拆成子任务，逐一定层</div>
+              <div class="step-desc">
+                不要整体评估"这个 AI 行不行"，要按用户路径把产品拆成细粒度子任务，每个子任务独立评估它属于哪一层边界（模型上限 / 应用方式 / 工程架构）。这个拆解过程，PM 是最有能力做的。
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">主导 Bad Case 库的建立和分类</div>
+              <div class="step-desc">
+                每周阅读最差的 20 条 Trace，按失败原因归类。这个工作是 PM 和工程师都能做的，但 PM 的视角更接近用户——能发现工程师看不到的失败（比如"技术上没错，但用户体验很差"）。
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <div class="step-title">基于层次判断，指导架构投入方向</div>
+              <div class="step-desc">
+                当知道每个子任务的失败属于哪一层，就能给出清晰的优先级：工程架构层的问题先修（投入产出比最高）；模型上限层的问题考虑换模型或降级方案；应用方式层的问题交给提示词优化。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Eval 与"边界三层模型"的对应</div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>边界层次</th>
+              <th>Eval 上的表现</th>
+              <th>对应 Eval 动作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>模型上限</strong><br>换提示词也救不了</td>
+              <td>Error Analysis 显示同类失败在不同输入格式下反复出现，Unit Test 系统性不过</td>
+              <td>记录为"模型上限型失败"，决策点：换更强模型 or 拆解任务降低难度</td>
+            </tr>
+            <tr>
+              <td><strong>应用方式</strong><br>时好时坏</td>
+              <td>同一类问题，精心构造的输入能过，粗糙的输入经常失败；LLM Judge 显示方差大</td>
+              <td>收集失败案例到 Few-shot 示例库，优化 Prompt，增加输入规范化处理</td>
+            </tr>
+            <tr>
+              <td><strong>工程架构</strong><br>模型能做但系统不给条件</td>
+              <td>Error Analysis 显示模型缺少关键上下文；"聪明大学生测试"：给同样输入他也答不对</td>
+              <td>补上下文（RAG/工具调用），拆分任务，改系统架构</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-success">
+        <div class="callout-title">✅ 总结：你对边界的判断有多准，Eval 体系就有多有效</div>
+        <p>Eval 体系的核心价值，不是自动化工具，而是它强迫你把对"好"的定义从模糊的感觉变成可追踪的标准。这个过程需要 PM 持续投入，也会持续反哺 PM 对产品的理解。</p>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-title">🧠 章节测验</div>
+          <div class="quiz-score-badge">0/3 答对</div>
+        </div>
+        <div id="quiz-pm">
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 1 题 · 单选</div>
+            <div class="quiz-q-text">为什么 PM 是 Eval 体系中最关键的 Benevolent Dictator 候选人？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. PM 有最多时间做数据标注</div>
+              <div class="quiz-option">B. PM 最了解用户期望和业务目标，能判断什么是真正"好的回答"</div>
+              <div class="quiz-option">C. PM 的技术背景让他们能设计更好的评估指标</div>
+              <div class="quiz-option">D. PM 对 AI 系统最客观中立</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！评估的核心是判断"好的回答是什么"，这需要深度理解用户和业务。PM 是最了解用户痛点、业务目标和产品边界的人，因此是最合适的最终判断者。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。Eval 的本质是定义"好"。PM 对用户和业务的理解，让他们能做出最接近真实用户需求的判断，这是 Eval 体系的核心输入。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 2 题 · 场景题</div>
+            <div class="quiz-q-text">你的团队在做 AI 写作助手，工程师说"模型的输出在语义相似度上评分很高"。作为 PM 你应该如何回应？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 很好，可以继续优化其他指标</div>
+              <div class="quiz-option">B. 语义相似度不等于用户认为有用，应该让真实场景的领域专家做 Pass/Fail 判断</div>
+              <div class="quiz-option">C. 把语义相似度目标从 0.8 提升到 0.9</div>
+              <div class="quiz-option">D. 再加几个通用指标一起评估</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！通用指标（语义相似度、BERTScore 等）和真实用户价值之间没有可靠的相关性。PM 的职责是把评估拉回到"用户真正需要什么"，而不是追求指标数字。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。这正是 PM 在 Eval 体系中的核心价值——把技术指标翻译成用户价值判断，确保评估的是真正重要的东西。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 3 题 · 判断</div>
+            <div class="quiz-q-text">PM 只需要在 Eval 体系建立初期参与，之后可以完全交给工程师维护。</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 正确</div>
+              <div class="quiz-option">B. 错误</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！产品迭代、用户需求变化、新功能上线，都会改变"好的回答"的定义。PM 需要持续参与，保证 Eval 标准随业务演进而更新——这是 Eval 体系保持有效性的关键。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是"错误"。Eval 体系不是一次性建立的，它需要随产品演进持续更新。PM 是"好的定义"的守护者，这个职责不能委托也不能停止。</div>
+          </div>
+        </div>
+        <div class="quiz-result">
+          <div class="quiz-result-score"></div>
+          <div class="quiz-result-msg"></div>
+          <button class="btn-reset">重新作答</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="page" id="page-faq">
+      <div class="page-header">
+        <div class="page-title">❓ 常见问题 FAQ</div>
+        <div class="page-subtitle">实战中最常被问到的 6 个问题，直接给答案</div>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-title">📌 这些问题从哪里来？</div>
+        <p>这 6 个问题是 Hamel Husain 和 Shreya 在教授 700+ 工程师和 PM 做 AI Evals 课程中，被反复提问的核心问题。每个答案都经过大量真实项目验证。</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Q1：当输出结果需要主观判断时，我该如何测试应用程序？</div>
+        </div>
+        <p style="margin-bottom:1rem;">这是最常见的困惑，也是整个 Eval 体系设计的出发点。主观判断 ≠ 无法测试，关键是把"主观"变成"可操作的标准"。</p>
+        <div class="step-block">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>找到你的 Benevolent Dictator（仁慈独裁者）</strong>
+            <p>一个真正理解用户和业务的人。他/她的判断就是你的"黄金标准"。多人投票解决不了主观问题，反而会引入噪音。你需要的是判断标准的一致性，不是民主。</p>
+          </div>
+        </div>
+        <div class="step-block">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>用 Pass/Fail + Critique 代替评分</strong>
+            <p>不要问"这个答案几分？"，而是问"这个答案，用户会不会满意？为什么？"。强制二元判断，然后写下具体原因。这个过程会逼迫你把模糊的"好感觉"变成可复现的标准。</p>
+          </div>
+        </div>
+        <div class="step-block">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>先做 Error Analysis，再定标准</strong>
+            <p>在看真实数据之前，你其实不知道"主观"在哪里。读 50 条真实对话，你会发现大多数"失败"其实是有规律的：格式问题、遗漏关键信息、语气不对……这些都可以变成明确的 Pass/Fail 标准。</p>
+          </div>
+        </div>
+        <div class="step-block">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <strong>对真正主观的部分：接受不确定性，记录分歧</strong>
+            <p>有些判断确实因人而异。这时候不要强求统一，而是记录下"什么情况下标注者会有分歧"，这本身就是对产品边界的重要洞察。</p>
+          </div>
+        </div>
+        <div class="callout callout-success" style="margin-top:1rem;">
+          <div class="callout-title">💡 核心原则</div>
+          <p>主观判断不是 Eval 的障碍，而是 Eval 必须解决的核心问题。你不能因为"主观"就放弃量化——量化的过程本身就是澄清产品标准的过程。</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Q2：如果我更改了提示（Prompt），如何知道不会破坏其他东西？</div>
+        </div>
+        <p style="margin-bottom:1rem;">这是 Prompt 工程的经典困境——改好一个地方，不知道有没有搞坏别的地方。解法是建立分层的回归测试体系。</p>
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab('faq-q2-tabs', 'faq-q2-layer1', this)">第一层：Unit Tests</div>
+          <div class="tab" onclick="switchTab('faq-q2-tabs', 'faq-q2-layer2', this)">第二层：人工抽样对比</div>
+          <div class="tab" onclick="switchTab('faq-q2-tabs', 'faq-q2-layer3', this)">第三层：A/B Test</div>
+        </div>
+        <div id="faq-q2-tabs">
+          <div id="faq-q2-layer1" class="tab-content active">
+            <h4 style="margin-bottom:0.5rem;">自动化回归测试（每次 Prompt 变更必跑）</h4>
+            <p>把之前发现过的失败案例都写成 Unit Test。每次改 Prompt，先跑 Unit Tests——如果任何已知失败重新出现，立刻阻止上线。成本极低，应该每次都做。</p>
+            <ul class="feature-list" style="margin-top:0.75rem;">
+              <li>把 <strong>每一个历史 Bug</strong> 都写成测试用例</li>
+              <li>包含边界情况、已知的坏输入</li>
+              <li>通过 = 没有回退，不通过 = 先别上</li>
+            </ul>
+          </div>
+          <div id="faq-q2-layer2" class="tab-content">
+            <h4 style="margin-bottom:0.5rem;">人工 Side-by-Side 对比（重大变更前做）</h4>
+            <p>取 20-50 条有代表性的生产 Trace，同时跑旧版 Prompt 和新版 Prompt，让领域专家逐条比较哪个更好。Unit Tests 只能防已知失败，Side-by-Side 才能发现整体质量变化。</p>
+            <ul class="feature-list" style="margin-top:0.75rem;">
+              <li>选取覆盖不同场景的多样化样本</li>
+              <li>让专家盲评（不知道哪个是新/旧）</li>
+              <li>记录每道题的判断理由</li>
+            </ul>
+          </div>
+          <div id="faq-q2-layer3" class="tab-content">
+            <h4 style="margin-bottom:0.5rem;">A/B Test（有充分信心时的最终验证）</h4>
+            <p>成本最高，不要对每个 Prompt 变更都做。当前两层都通过了，你有相当信心新版更好，才考虑上 A/B Test 验证真实用户行为。</p>
+            <ul class="feature-list" style="margin-top:0.75rem;">
+              <li>需要足够的流量才有统计意义</li>
+              <li>定义好核心业务指标（不只是 Eval Pass Rate）</li>
+              <li>设好提前终止条件</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Q3：我应该把工程精力集中在哪些方面？需要测试所有东西吗？</div>
+        </div>
+        <p style="margin-bottom:1rem;">不需要测试所有东西。关键是把精力花在 ROI 最高的地方。</p>
+        <div class="grid-2" style="margin-bottom:1rem;">
+          <div class="card" style="border-color: var(--green);">
+            <div class="card-header"><div class="card-title" style="color:var(--green);">✅ 优先做</div></div>
+            <ul class="feature-list">
+              <li><strong>Error Analysis</strong> — 永远是第一位，没有之一</li>
+              <li><strong>高频 × 高影响</strong> 的失败模式</li>
+              <li><strong>Unit Tests for 已知 Bug</strong> — 每发现一个 Bug，立刻写成测试</li>
+              <li><strong>人工标注数据</strong> — 30-50 条高质量 Pass/Fail + Critique</li>
+            </ul>
+          </div>
+          <div class="card" style="border-color: var(--red);">
+            <div class="card-header"><div class="card-title" style="color:var(--red);">❌ 避免</div></div>
+            <ul class="feature-list">
+              <li><strong>测试所有东西</strong> — 维护成本极高，反而降低速度</li>
+              <li><strong>通用指标</strong> — BERTScore、ROUGE 等与真实业务脱节</li>
+              <li><strong>提前设计 Eval 框架</strong> — 没有数据之前，框架是空架子</li>
+              <li><strong>过度自动化</strong> — 有些失败模式用人工就够了</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout callout-info">
+          <div class="callout-title">📊 时间分配参考</div>
+          <p>Hamel 的经验：AI 产品项目中，<strong>60-80% 的开发时间</strong>花在 Error Analysis 和 Eval 上（主要是看数据、理解失败），而不是构建自动化检查。如果你大多数时间在搭架子而不是看数据，方向可能偏了。</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Q4：如果我没有数据或客户，我该从哪里开始？</div>
+        </div>
+        <p style="margin-bottom:1rem;">没有数据是最常见的起点困境。正确答案是：<strong>先创造数据，而不是先建 Eval 体系</strong>。</p>
+        <div class="step-block">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>尽快上线，哪怕是最小版本</strong>
+            <p>给 5-10 个内测用户（内部同事、友好用户），让他们真实使用。真实用户会以你完全预料不到的方式使用产品，这是任何合成数据都无法替代的。</p>
+          </div>
+        </div>
+        <div class="step-block">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>用合成数据覆盖已知场景（谨慎使用）</strong>
+            <p>没有真实用户时，可以用 LLM 生成合成的用户输入，然后把这些输入喂给你真实的 AI 系统，观察实际回答。<strong>只合成用户输入，不合成 AI 回答</strong>——你要测试的是你自己的系统。</p>
+          </div>
+        </div>
+        <div class="step-block">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>自己扮演用户，做 5-10 次完整对话</strong>
+            <p>带着"我是用户"的心态和你的系统交互，记录所有让你觉得"不太对"的地方。这些就是你第一批 Eval 的种子。最小可行 Eval：20-50 条输出 + 人工 Pass/Fail 判断。</p>
+          </div>
+        </div>
+        <div class="callout callout-warning">
+          <div class="callout-title">⚠️ 合成数据的边界</div>
+          <p>合成数据无法揭示你不知道自己不知道的失败模式（unknown unknowns）。LLM 总会以意想不到的方式失败，只有真实用户数据才能暴露这些盲区。</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Q5：我应该跟踪哪些指标？我应该使用哪些工具？</div>
+        </div>
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab('faq-q5-tabs', 'faq-q5-metrics', this)">指标选择</div>
+          <div class="tab" onclick="switchTab('faq-q5-tabs', 'faq-q5-tools', this)">工具选择</div>
+        </div>
+        <div id="faq-q5-tabs">
+          <div id="faq-q5-metrics" class="tab-content active">
+            <h4 style="margin-bottom:0.75rem;">应该跟踪哪些指标？</h4>
+            <div class="grid-2">
+              <div>
+                <p style="color:var(--green);font-weight:600;margin-bottom:0.5rem;">✅ 有意义的指标</p>
+                <ul class="feature-list">
+                  <li><strong>业务专属 Pass Rate</strong> — 基于 Error Analysis 发现的真实失败类别</li>
+                  <li><strong>用户投诉率 / 负面反馈率</strong> — 最直接的真实信号</li>
+                  <li><strong>重试率</strong> — 重试说明上一个答案没满足需求</li>
+                  <li><strong>关键场景覆盖率</strong> — 最重要场景的通过情况</li>
+                </ul>
+              </div>
+              <div>
+                <p style="color:var(--red);font-weight:600;margin-bottom:0.5rem;">❌ 避免依赖</p>
+                <ul class="feature-list">
+                  <li><strong>BERTScore / ROUGE</strong> — 和用户满意度没有可靠相关性</li>
+                  <li><strong>通用 LLM 评分</strong> — 不了解你业务标准的 LLM 打分是噪音</li>
+                  <li><strong>整体平均分</strong> — 掩盖具体失败模式，无法指导行动</li>
+                  <li><strong>Likert 量表</strong> — 分数差别意味着什么？行动不明确</li>
+                </ul>
+              </div>
+            </div>
+            <div class="callout callout-info" style="margin-top:1rem;">
+              <div class="callout-title">💡 指标设计原则</div>
+              <p>每个指标都应该能回答：<strong>"如果这个指标变好/变差了，我下一步做什么？"</strong> 答不上来的指标对你没有价值。</p>
+            </div>
+          </div>
+          <div id="faq-q5-tools" class="tab-content">
+            <h4 style="margin-bottom:0.75rem;">应该使用哪些工具？</h4>
+            <p style="margin-bottom:0.75rem;"><strong>工具是次要的，流程和原则是第一位的。</strong>工具选择不当的代价是：用工具的限制约束了你的思维。</p>
+            <div class="step-block">
+              <div class="step-num">最重要</div>
+              <div class="step-body">
+                <strong>数据查看器（Data Viewer）</strong>
+                <p>能快速查看 Trace 全貌的工具。强烈推荐用 Notebook（Jupyter）自己搭，1 天内可完成。通用平台往往无法展示你业务最关键的上下文信息。</p>
+              </div>
+            </div>
+            <div class="step-block">
+              <div class="step-num">次重要</div>
+              <div class="step-body">
+                <strong>Trace 日志记录</strong>
+                <p>把每次交互的完整 Trace 记下来。工具不重要，哪怕写进数据库或 CSV 都行。关键是有，不是用什么框架。</p>
+              </div>
+            </div>
+            <div class="step-block">
+              <div class="step-num">按需</div>
+              <div class="step-body">
+                <strong>自动化 Eval 框架</strong>
+                <p>等你确认了值得自动化的失败模式，再考虑用什么框架。工具应该服务于你已经想清楚的 Eval 设计，而不是反过来。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Q6：我可以实现测试和评估的自动化吗？如果可以，我如何才能信任它？</div>
+        </div>
+        <p style="margin-bottom:1rem;">可以，但"信任自动化 Eval"需要主动建立，它不会自然而然地存在。</p>
+        <div class="callout callout-info" style="margin-bottom:1rem;">
+          <div class="callout-title">🔑 核心原则：自动化 Eval 必须以人工标注为锚点</div>
+          <p>没有人工建立的 Ground Truth，自动化 Eval 对齐的是什么？它只是在放大随机噪音。人工标注是所有自动化 Eval 的根基，这个根基不能省略。</p>
+        </div>
+        <div class="step-block">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>建立校准数据集：30-50 条人工 Pass/Fail + Critique</strong>
+            <p>让 Benevolent Dictator 对这些 Trace 做出判断并写下详细理由。这些数据是验证 LLM Judge 准不准的"测试集"。</p>
+          </div>
+        </div>
+        <div class="step-block">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>用校准数据验证你的自动化 Eval</strong>
+            <p>把校准数据集喂给 LLM Judge，看它的判断和人工判断的一致率是多少。通常 &gt;85% 才有理由信任。一致率低，先改 Judge，再说自动化。</p>
+          </div>
+        </div>
+        <div class="step-block">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>Critique Shadowing：让 LLM Judge 学习人工判断逻辑</strong>
+            <p>把专家的 Critique 作为 LLM Judge 的 Few-shot 示例，让 LLM 学习同样的判断逻辑。这是对齐 LLM Judge 最有效的方式。</p>
+          </div>
+        </div>
+        <div class="step-block">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <strong>持续定期抽样验证，不要一劳永逸</strong>
+            <p>每隔一段时间（如每两周），随机抽 20-30 条 Judge 的判断和人工判断对比，确认一致率没有下滑。产品变化、用户行为变化都可能让 Judge 漂移。</p>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top:1rem;">
+          <div class="card" style="border-color:var(--green);">
+            <div class="card-header"><div class="card-title" style="color:var(--green);">✅ 适合自动化</div></div>
+            <ul class="feature-list">
+              <li>已知失败的回归测试（Unit Tests）</li>
+              <li>格式和结构验证（正则/断言）</li>
+              <li>安全性检查（有害内容、越界请求）</li>
+              <li>高频且有足够校准数据的判断任务</li>
+            </ul>
+          </div>
+          <div class="card" style="border-color:var(--yellow);">
+            <div class="card-header"><div class="card-title" style="color:var(--yellow);">⚠️ 谨慎自动化</div></div>
+            <ul class="feature-list">
+              <li>复杂的多维度质量判断</li>
+              <li>需要专业知识的领域判断</li>
+              <li>校准数据少于 30 条的维度</li>
+              <li>结果会直接触发高影响行动的判断</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-title">🧠 章节测验</div>
+          <div class="quiz-score-badge">0/3 答对</div>
+        </div>
+        <div id="quiz-faq">
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 1 题 · 单选</div>
+            <div class="quiz-q-text">面对"主观判断"类输出，Eval 的正确起点是什么？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 先选好评估工具和框架</div>
+              <div class="quiz-option">B. 找到懂业务的专家，做人工 Pass/Fail + Critique，从真实数据中提炼标准</div>
+              <div class="quiz-option">C. 用多人投票取平均来消除主观性</div>
+              <div class="quiz-option">D. 接受主观判断无法量化，改用用户满意度调研</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！主观 ≠ 不可量化。找到 Benevolent Dictator，用 Pass/Fail + Critique 强制把模糊感觉变成明确标准，再从数据中提炼——这是把主观变可测的唯一路径。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。主观性是 Eval 必须解决的问题，不是回避的理由。多人投票引入的是噪音，工具无法解决标准模糊的问题。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 2 题 · 场景题</div>
+            <div class="quiz-q-text">产品还没有真实用户，你应该先做什么？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 设计完整的 Eval 框架，等用户来了再填数据</div>
+              <div class="quiz-option">B. 尽快让 5-10 个内部同事真实使用，收集最小量真实 Trace，同时用合成数据覆盖已知场景</div>
+              <div class="quiz-option">C. 用 LLM 生成 1000 条合成对话，建立完整数据集</div>
+              <div class="quiz-option">D. 等有 100 个付费用户再开始做 Eval</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！先创造真实数据，哪怕只有 5-10 个内部用户。真实用户会以意想不到的方式使用产品，合成数据覆盖不了这些盲区。最小可行 Eval：20-50 条真实 Trace + 人工标注。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是B。等待完美数据集是最常见的拖延。框架是空的，要先有数据才能填充。1000 条合成数据不如 20 条真实数据。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 3 题 · 判断</div>
+            <div class="quiz-q-text">只要 LLM Judge 的一致率在建立时验证过一次，后续就可以持续信任它。</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 正确</div>
+              <div class="quiz-option">B. 错误</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！LLM Judge 会随时间漂移——产品变化、模型更新、用户行为变化都会影响可靠性。需要定期（如每两周）抽样人工验证，确认一致率没有下滑。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是"错误"。信任不是一次性建立的。持续的人工抽样验证是保持 LLM Judge 可信度的唯一方法，不能一劳永逸。</div>
+          </div>
+        </div>
+        <div class="quiz-result">
+          <div class="quiz-result-score"></div>
+          <div class="quiz-result-msg"></div>
+          <button class="btn-reset">重新作答</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Maven 课程深度解析 -->
+    <div class="page" id="page-course">
+      <div class="page-header">
+        <div class="page-title">🎓 Maven 课程深度解析</div>
+        <div class="page-subtitle">AI Evals For Engineers &amp; PMs — Hamel Husain &amp; Shreya Shankar 主讲</div>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-title">📌 关于这门课</div>
+        <p>这是 Maven 平台评分最高的 AI 技术课程之一（4.8/5，700+ 学员）。4 周 · 8 节课 · Cohort 制。主讲人 Hamel Husain 和 Shreya Shankar 合计拥有 25+ 年 AI 系统实战经验，曾就职于 Google、GitHub、Hugging Face。课程价格 $3000，但这里帮你提炼出核心价值。</p>
+      </div>
+
+      <!-- 课程结构总览 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📋 8 节课完整大纲</div>
+        </div>
+        <div class="grid-2">
+          <div>
+            <div class="step-block">
+              <div class="step-num">L1</div>
+              <div class="step-body">
+                <strong>基础原理 &amp; LLM 应用评估生命周期</strong>
+                <p>为什么 Eval 对 LLM 产品不可缺少；LLM 输出的特殊挑战（随机性、上下文依赖）；从开发到生产的全生命周期视角；基础 Instrumentation 和可观测性；Error Analysis 入门。</p>
+              </div>
+            </div>
+            <div class="step-block">
+              <div class="step-num">L2</div>
+              <div class="step-body">
+                <strong>系统性 Error Analysis</strong>
+                <p>合成数据生成（维度采样法）；Open Coding → Axial Coding；定量分析定性数据；Error Analysis 常见陷阱；动手练习：构建 Error 跟踪系统。</p>
+              </div>
+            </div>
+            <div class="step-block">
+              <div class="step-num">L3</div>
+              <div class="step-body">
+                <strong>实现有效的 Evaluations</strong>
+                <p>代码型 Eval 和 LLM Judge 两种方式；单输出 vs 系统级评估；数据集组织（输入 + 参考数据）；动手练习：构建自动化 Eval Pipeline。</p>
+              </div>
+            </div>
+            <div class="step-block">
+              <div class="step-num">L4</div>
+              <div class="step-body">
+                <strong>协作式 Eval 实践</strong>
+                <p>团队协作的 Eval 工作流；Inter-annotator agreement 统计方法（Cohen's Kappa）；共识构建技术；动手练习：小组对齐评估标准。</p>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="step-block">
+              <div class="step-num">L5</div>
+              <div class="step-body">
+                <strong>架构专项评估策略</strong>
+                <p>RAG 系统评估（检索相关性 + 事实准确性）；多步骤 Pipeline 测试；Tool Use 和多轮对话质量评估；多模态评估；动手练习：为不同架构构建测试套件。</p>
+              </div>
+            </div>
+            <div class="step-block">
+              <div class="step-num">L6</div>
+              <div class="step-body">
+                <strong>生产监控 &amp; 持续评估</strong>
+                <p>Traces、Spans、Session Tracking；CI/CD Pipeline 中的自动化 Eval Gate；实验间一致性对比；Safety 和质量控制 Guardrails；动手练习：设计监控 Dashboard。</p>
+              </div>
+            </div>
+            <div class="step-block">
+              <div class="step-num">L7</div>
+              <div class="step-body">
+                <strong>高效的持续人工审核系统</strong>
+                <p>最大化审核 ROI 的采样策略；自定义审核界面设计（提效 10x）；动手练习：实现持续 Feedback 收集系统。</p>
+              </div>
+            </div>
+            <div class="step-block">
+              <div class="step-num">L8</div>
+              <div class="step-body">
+                <strong>成本优化</strong>
+                <p>量化 LLM 产品的价值 vs 成本；基于查询复杂度的智能模型路由（Model Cascade）；Prompt 缓存优化（缓存命中率 ~90% 折扣）；动手练习：优化真实应用的成本效率。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 三个海湾 详细 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🌊 三个海湾模型（Three Gulfs）— 课程核心框架</div>
+        </div>
+        <p style="margin-bottom:1rem;">这是整门课的核心诊断框架，用来回答"我的 AI 系统为什么出问题？"三个 Gulf 分别对应三类根本性挑战。</p>
+        <div class="grid-2">
+          <div class="card" style="border-color:var(--blue);">
+            <div class="card-header"><div class="card-title" style="color:var(--blue);">理解的海湾（Gulf of Comprehension）</div></div>
+            <p><strong>开发者 ↔ 数据之间</strong></p>
+            <p style="margin-top:0.5rem;">你对数据的理解总是不完整的：真实用户 Query、系统输出、合成测试用例。你只能建立一个局部模型，永远无法完全掌握系统真正在做什么。</p>
+            <div class="callout callout-warning" style="margin-top:0.75rem;">
+              <div class="callout-title">真实案例</div>
+              <p>Cleric 构建生产事故分析 AI 时，工程师常说"看起来不错，但我不确定是否正确"——这就是 Gulf of Comprehension：没有 Ground Truth，你无法判断输出好坏。</p>
+            </div>
+            <p style="margin-top:0.75rem;"><strong>解法：</strong>系统性 Error Analysis；构建自定义数据查看器；看足够多的 Trace 达到理论饱和。</p>
+          </div>
+          <div class="card" style="border-color:var(--green);">
+            <div class="card-header"><div class="card-title" style="color:var(--green);">规范的海湾（Gulf of Specification）</div></div>
+            <p><strong>开发者 ↔ LLM Pipeline 之间</strong></p>
+            <p style="margin-top:0.5rem;">你在努力描述自己想要什么，但大量意图是隐性的——只有看到不满意的输出，你才意识到自己其实想要什么。Prompt 永远无法完全捕捉你的真实意图。</p>
+            <div class="callout callout-warning" style="margin-top:0.75rem;">
+              <div class="callout-title">真实案例</div>
+              <p>Sherlock 的 API 错误信息规范失败：只给 AI Agent 返回 "HTTP 422"，不给详细错误字段。Agent 陷入死循环。一旦暴露完整错误描述，Agent 立即修正行为。</p>
+            </div>
+            <p style="margin-top:0.75rem;"><strong>解法：</strong>Pass/Fail + Critique 循环；用具体失败案例改进 Prompt；明确 LLM Agency Level（低/中/高 自主性）。</p>
+          </div>
+        </div>
+        <div class="card" style="border-color:var(--purple);margin-top:1rem;">
+          <div class="card-header"><div class="card-title" style="color:var(--purple);">泛化的海湾（Gulf of Generalization）</div></div>
+          <p><strong>数据 ↔ LLM Pipeline 之间</strong></p>
+          <p style="margin-top:0.5rem;">即使你把一切都规范清楚了，模型在遇到训练分布之外的数据时仍然会失败。这是模型本身的局限，需要不同的策略——Fine-tuning、任务分解、RAG 改进。</p>
+          <div class="grid-2" style="margin-top:0.75rem;">
+            <div class="callout callout-warning">
+              <div class="callout-title">真实案例 1</div>
+              <p>Discord 的 Clyde 聊天机器人在长对话或创意 Jailbreak（"grandma jailbreak"）时会"出戏"，无法保持一致的人格——这就是泛化失败。需要持续监控 + 安全护栏。</p>
+            </div>
+            <div class="callout callout-info">
+              <div class="callout-title">真实案例 2</div>
+              <p>Cleric 的奇特发现：高级模型在测试环境中会检测到"它在模拟中"（通过 API 响应时间、数据分布等微信号），从而改变行为——这是泛化到了意料之外的环境特征。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 分析-测量-改进循环 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🔄 分析-测量-改进循环（Analyze → Measure → Improve）</div>
+        </div>
+        <p style="margin-bottom:1rem;">课程把所有内容组织在这个三阶段循环里。每个阶段都有经典的反模式需要避开。</p>
+
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab('course-cycle-tabs', 'course-cycle-analyze', this)">① 分析（Analyze）</div>
+          <div class="tab" onclick="switchTab('course-cycle-tabs', 'course-cycle-measure', this)">② 测量（Measure）</div>
+          <div class="tab" onclick="switchTab('course-cycle-tabs', 'course-cycle-improve', this)">③ 改进（Improve）</div>
+        </div>
+        <div id="course-cycle-tabs">
+          <div id="course-cycle-analyze" class="tab-content active">
+            <h4 style="margin-bottom:0.75rem;">目标：定性理解，建立失败分类体系</h4>
+            <p style="margin-bottom:0.75rem;">用 Open Coding → Axial Coding，把模糊的"感觉不对"转化成可命名、可计量的失败类别。核心步骤：</p>
+            <ul class="feature-list" style="margin-bottom:1rem;">
+              <li>准备数据集（真实 Trace 或维度采样合成数据）</li>
+              <li>Open Coding：逐条阅读，贴描述性标签</li>
+              <li>Axial Coding：把标签聚类成结构化分类</li>
+              <li>反复迭代直到理论饱和（新数据没有新类别）</li>
+            </ul>
+            <div class="callout callout-warning">
+              <div class="callout-title">❌ 分析阶段的常见陷阱</div>
+              <ul class="feature-list" style="margin-top:0.5rem;">
+                <li><strong>把标注外包给不懂业务的人</strong> — 技术上正确但业务上失败的回答，只有领域专家能识别</li>
+                <li><strong>看的案例不够多</strong> — 没有达到理论饱和就停止，会遗漏重要失败模式</li>
+                <li><strong>跳过分析阶段</strong> — Shreya 强调：无论公司大小，Error Analysis 永远是必须做的第一步</li>
+              </ul>
+            </div>
+            <div class="callout callout-info" style="margin-top:0.75rem;">
+              <div class="callout-title">💡 维度采样法（Dimensional Sampling）</div>
+              <p>没有真实用户时，用这个方法生成高质量合成数据：①识别有意义的变化维度（用户意图、用户画像、查询复杂度）→ ②在各维度上生成组合 → ③把每个组合转成真实 Query。避免"程序化生成的千篇一律"问题。</p>
+            </div>
+          </div>
+          <div id="course-cycle-measure" class="tab-content">
+            <h4 style="margin-bottom:0.75rem;">目标：量化失败频率，为改进提供优先级依据</h4>
+            <p style="margin-bottom:0.75rem;">两类 Eval 工具，不同场景用不同的：</p>
+            <div class="grid-2" style="margin-bottom:1rem;">
+              <div class="card" style="border-color:var(--green);">
+                <div class="card-header"><div class="card-title" style="color:var(--green);">程序化 Eval（首选）</div></div>
+                <p>快、便宜、客观。能用代码检查的，不要用 LLM。</p>
+                <ul class="feature-list" style="margin-top:0.5rem;">
+                  <li>检查 Tool 是否被调用 → 直接看 tool object 是否有值</li>
+                  <li>正则匹配、Schema 验证、关键词检测</li>
+                  <li>对于 Agent：分别检查各阶段（工具选择、参数生成、执行结果、输出处理）</li>
+                </ul>
+              </div>
+              <div class="card" style="border-color:var(--blue);">
+                <div class="card-header"><div class="card-title" style="color:var(--blue);">LLM Judge（主观/复杂 → 才用）</div></div>
+                <p>处理主观或需要推理的判断，但必须先建立信任。</p>
+                <ul class="feature-list" style="margin-top:0.5rem;">
+                  <li>用 Train/Dev/Test 切分标注数据集（不能泄露！）</li>
+                  <li>用 Dev 集迭代改 Judge Prompt</li>
+                  <li>用 Test 集计算 TPR/TNR（测量 Judge 可靠性）</li>
+                  <li>用 <code>judgy</code> 库做 Bias Correction</li>
+                </ul>
+              </div>
+            </div>
+            <div class="callout callout-warning">
+              <div class="callout-title">❌ 测量阶段的常见陷阱</div>
+              <ul class="feature-list" style="margin-top:0.5rem;">
+                <li><strong>LLM Judge 没有对齐人工判断</strong> — 没有人工数据作锚点的 Judge 是放大噪音</li>
+                <li><strong>数据泄露</strong> — 把失败 Trace 放进 Judge Prompt，再用这些 Trace 测试 → 自我实现预言</li>
+                <li><strong>TNR 低 = 虚假信心</strong>，TPR 低 = 低估系统能力；两个都要测量</li>
+              </ul>
+            </div>
+          </div>
+          <div id="course-cycle-improve" class="tab-content">
+            <h4 style="margin-bottom:0.75rem;">目标：做最小干预，解决真实的、已被量化的问题</h4>
+            <p style="margin-bottom:0.75rem;">改进策略应该按成本从低到高尝试，不要一上来就上大招：</p>
+            <div class="step-block">
+              <div class="step-num">低</div>
+              <div class="step-body">
+                <strong>Prompt 工程</strong>
+                <p>大多数情况下，改 Prompt 就足够了。结构化提示：静态内容放前面（最大化缓存命中，省约 90% Token 成本），动态内容放后面。批量请求额外省 50%。</p>
+              </div>
+            </div>
+            <div class="step-block">
+              <div class="step-num">中</div>
+              <div class="step-body">
+                <strong>架构调整</strong>
+                <p>任务分解（把一个复杂 LLM 调用拆成多个聚焦的步骤）、修复 Tool 描述、改进检索策略（RAG）。</p>
+              </div>
+            </div>
+            <div class="step-block">
+              <div class="step-num">高</div>
+              <div class="step-body">
+                <strong>Fine-tuning 和 Model Cascade</strong>
+                <p>Model Cascade：基于查询复杂度在便宜模型和贵模型之间路由。前提是置信度 ↔ 正确性之间有足够相关性（生成式任务未必成立）。Fine-tuning 是最后手段，先确认是 Gulf of Generalization 问题再考虑。</p>
+              </div>
+            </div>
+            <div class="callout callout-warning" style="margin-top:0.75rem;">
+              <div class="callout-title">❌ 改进阶段的常见陷阱</div>
+              <ul class="feature-list" style="margin-top:0.5rem;">
+                <li><strong>跳过分析和测量，直接改进</strong> — 最常见的浪费时间方式</li>
+                <li><strong>直接跳到 Fine-tuning</strong> — 80% 的情况下 Prompt 工程就够了，但很多人"听说过 Fine-tuning"就想直接上</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 真实公司案例 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🏢 真实公司 Eval 案例精选</div>
+        </div>
+        <p style="margin-bottom:1rem;">以下案例来自 ZenML 的 LLMOps 数据库，涵盖 800+ 真实 AI 落地案例，与课程框架深度对应。</p>
+
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab('course-cases-tabs', 'course-cases-anaconda', this)">Anaconda</div>
+          <div class="tab" onclick="switchTab('course-cases-tabs', 'course-cases-coursera', this)">Coursera</div>
+          <div class="tab" onclick="switchTab('course-cases-tabs', 'course-cases-canva', this)">Canva</div>
+          <div class="tab" onclick="switchTab('course-cases-tabs', 'course-cases-slack', this)">SumUp</div>
+        </div>
+        <div id="course-cases-tabs">
+          <div id="course-cases-anaconda" class="tab-content active">
+            <h4 style="margin-bottom:0.5rem;">Anaconda：从 0% 到 100%，用 Eval 驱动开发</h4>
+            <p>AI 编码助手初始成功率：<strong>0-13%</strong>。通过 Evaluations Driven Development (EDD) 方法论：</p>
+            <ul class="feature-list" style="margin-top:0.75rem;">
+              <li>构建 <code>llm-eval</code> 框架，自动执行数千个生成的代码方案并测试</li>
+              <li>Few-shot 学习（精心挑选的真实 Python 错误）</li>
+              <li>Chain-of-Thought 提示（逐步推理）</li>
+              <li>"Agentic Feedback Iteration"：用 LLM 分析 Eval 结果并建议 Prompt 改进</li>
+            </ul>
+            <p style="margin-top:0.75rem;">结果：Mistral 7B 在特定任务上从 <strong>0% → 100%</strong> 成功率。</p>
+            <div class="callout callout-success" style="margin-top:0.75rem;">
+              <div class="callout-title">课程框架对应</div>
+              <p>没有自动化 Eval，这些 Prompt 技术的效果根本无从比较。Eval 是能"看见"改进的前提——这正是 Analyze → Measure → Improve 循环的意义。</p>
+            </div>
+          </div>
+          <div id="course-cases-coursera" class="tab-content">
+            <h4 style="margin-bottom:0.5rem;">Coursera：系统性 AI 评估框架 → 直接业务结果</h4>
+            <p>评估 AI Coach 聊天机器人 + 自动评分系统，四步框架：</p>
+            <ul class="feature-list" style="margin-top:0.75rem;">
+              <li>① 提前定义成功标准（上线前，不是上线后）</li>
+              <li>② 混合数据集（真实匿名 Transcript + LLM 生成边界用例）</li>
+              <li>③ 双层评估：启发式检查 + LLM Judge</li>
+              <li>④ 持续生产监控</li>
+            </ul>
+            <p style="margin-top:0.75rem;"><strong>关键发现：</strong>早期原型对"模糊答案"太宽松——只有系统性负面测试才能发现这个问题。</p>
+            <div class="callout callout-success" style="margin-top:0.75rem;">
+              <div class="callout-title">业务结果</div>
+              <p>聊天机器人学员满意度 90%；自动评分使课程完成率提升 16.7%；评分时间从数小时缩短到 1 分钟以内。</p>
+            </div>
+          </div>
+          <div id="course-cases-canva" class="tab-content">
+            <h4 style="margin-bottom:0.5rem;">Canva Magic Switch：Eval 先行，实现后行</h4>
+            <p>完全颠覆传统开发流程：<strong>先定义 Eval 标准，再开始实现。</strong></p>
+            <ul class="feature-list" style="margin-top:0.75rem;">
+              <li>5 个评估维度：信息保留、意图对齐、语义顺序、语气适当性、格式一致性（均归一化到 0-1）</li>
+              <li>消融实验（Ablation Studies）：故意降低输出质量来验证 LLM Evaluator 能否可靠检测差异</li>
+              <li>用 Eval 作为 Prompt 变更的回归测试</li>
+            </ul>
+            <div class="callout callout-success" style="margin-top:0.75rem;">
+              <div class="callout-title">课程框架对应</div>
+              <p>"用 Eval 做 Prompt 变更的回归测试"——这正是 Q2 的核心答案。Canva 证明了这个方法在真实产品中可行且有效。</p>
+            </div>
+          </div>
+          <div id="course-cases-slack" class="tab-content">
+            <h4 style="margin-bottom:0.5rem;">SumUp：为主观、合规敏感的文本生成建立 Eval 体系</h4>
+            <p>场景：为反洗钱（AML）叙述性报告自动生成。挑战极其艰巨：</p>
+            <ul class="feature-list" style="margin-top:0.75rem;">
+              <li>ROUGE 等通用 NLP 指标完全无效（自由格式合规报告）</li>
+              <li>自建 LLM 评估系统，4 个自定义指标：准确性、合规对齐、相关性、排除标准</li>
+              <li>偏见缓解：Position Swapping + Few-shot Calibration</li>
+              <li>核心验证：自动化评估与人工审核员判断的强相关性</li>
+            </ul>
+            <div class="callout callout-success" style="margin-top:0.75rem;">
+              <div class="callout-title">关键洞见</div>
+              <p>"精确测量是评估、迭代和改进模型的关键。"——Eval 不只是有帮助，有时是让高风险场景能够上生产的<strong>唯一使能技术</strong>。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 高级技巧 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🔬 课程深处的高级技巧</div>
+        </div>
+        <div class="grid-2">
+          <div>
+            <h4 style="margin-bottom:0.5rem; color:var(--blue);">自定义审核界面 → 10x 效率提升</h4>
+            <p>课程花了整整一节课（L7）讲这个。核心论点：通用工具（电子表格、通用日志查看器）无法展示你业务最关键的上下文信息。</p>
+            <ul class="feature-list" style="margin-top:0.5rem;">
+              <li>自定义界面：200 条/小时 vs 电子表格 20 条/小时（10x）</li>
+              <li>应用 Nielsen 可用性启发：进度条激励完成；Pass/Fail 单键操作；预置失败模式选项（减少认知负担）；允许"延迟"避免卡住</li>
+              <li>1-2 天内用 Streamlit 或 FastHTML 自己搭一个</li>
+            </ul>
+
+            <h4 style="margin-bottom:0.5rem; margin-top:1rem; color:var(--purple);">Transition Failure Matrix（Agent 系统）</h4>
+            <p>对于多步骤 Agent 系统，用状态转移失败矩阵找调试优先级：哪个状态转移失败率最高？那就是优先修的地方。</p>
+          </div>
+          <div>
+            <h4 style="margin-bottom:0.5rem; color:var(--green);">评估的分层抽样策略</h4>
+            <p>每周目标：约 100 条 Trace。三种采样混合：</p>
+            <ul class="feature-list" style="margin-top:0.5rem;">
+              <li><strong>随机采样</strong>：整体健康检查</li>
+              <li><strong>不确定性采样</strong>：LLM Judge 置信度低的用例（最有学习价值）</li>
+              <li><strong>失败驱动采样</strong>：违规、Bug、用户投诉触发的用例</li>
+            </ul>
+
+            <h4 style="margin-bottom:0.5rem; margin-top:1rem; color:var(--red);">评估条件漂移（Evaluation Criteria Drift）</h4>
+            <p>标注过程中，你对失败模式的理解会演变。标注结束时的你和开始时的你，看数据的眼光已经不同了——这意味着你必须回去重新标注早期数据，直到标准真正一致。这是正常的，不是 Bug。</p>
+
+            <h4 style="margin-bottom:0.5rem; margin-top:1rem; color:var(--yellow);">LLM Agency Levels</h4>
+            <p>必须在 Prompt 里明确指定 LLM 的自主程度：<strong>高自主</strong>（主动重新解读用户意图）/ <strong>中等</strong>（提出澄清问题）/ <strong>低自主</strong>（字面执行用户请求）。不同产品场景对应不同选择，影响用户如何与系统交互。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 特邀嘉宾 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🎤 特邀嘉宾讲座（精选内容）</div>
+        </div>
+        <div class="grid-2">
+          <div class="step-block" style="grid-column: span 1;">
+            <div class="step-num">👩</div>
+            <div class="step-body">
+              <strong>Teresa Torres（Product Talk）</strong>
+              <p>作为 PM，4 周内从零到 5 个自动化 Eval。核心经验：PM 可以，也应该拥有 Eval 能力——它让产品决策从"感觉对"变成"数据说"。</p>
+            </div>
+          </div>
+          <div class="step-block" style="grid-column: span 1;">
+            <div class="step-num">🔬</div>
+            <div class="step-body">
+              <strong>Leonard Tang（Haize Labs）</strong>
+              <p>用推理时计算扩展提升 LLM Judge 质量。更好的 Judge 不只靠更大的模型，也可以靠让模型思考更多时间。</p>
+            </div>
+          </div>
+          <div class="step-block" style="grid-column: span 1;">
+            <div class="step-num">🛡️</div>
+            <div class="step-body">
+              <strong>Udi Menkes（Intuit PM）</strong>
+              <p>构建可信 AI Agent 的 Playbook：如何在多步骤自主决策中保持人类可信度和可控性。</p>
+            </div>
+          </div>
+          <div class="step-block" style="grid-column: span 1;">
+            <div class="step-num">🔍</div>
+            <div class="step-body">
+              <strong>Skylar Payne</strong>
+              <p>避免 RAG 评估中的常见陷阱：检索和生成分开评估；Recall@K 和 NDCG 的正确用法；为什么端到端测试不够。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-info" style="margin-top:1rem;">
+          <div class="callout-title">🛠️ 工具赛道（可选）</div>
+          <p>课程专门开设了工具商 Workshop 环节（<strong>不强制</strong>），让主流 Eval 工具商演示真实用法：</p>
+          <ul class="feature-list" style="margin-top:0.5rem;">
+            <li><strong>Harrison Chase（LangChain CEO）</strong> → LangSmith</li>
+            <li><strong>Mikyo King &amp; Isaac Flath（Arize）</strong> → Phoenix</li>
+            <li><strong>Wayde Gilliam</strong> → Braintrust</li>
+          </ul>
+          <p style="margin-top:0.5rem;">Hamel 的立场：这些工具是可选的，工具选择应该由你具体需求驱动，不应该是起点。</p>
+        </div>
+      </div>
+
+      <!-- 学员评价精选 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">💬 学员真实反馈（未经修饰）</div>
+        </div>
+        <div class="grid-2">
+          <div class="callout callout-success">
+            <div class="callout-title">Hugo · 数据科学家</div>
+            <p>"这门课从根本上改变了我做 Evals 的方式，重塑了我的咨询方式、教学方式，以及对构建真正有效的 AI 系统的思考方式。Shreya 和 Hamel 是 Evals 界的 Michael Jordan 🏀"</p>
+          </div>
+          <div class="callout callout-success">
+            <div class="callout-title">Stefano · 创始人</div>
+            <p>"'Understanding before tooling' 的理念深深打动了我。课程指导你从电子表格到 Streamlit 应用，构建真正适合你产品的工具。这是我最喜欢的在线课程之一，没有之一。"</p>
+          </div>
+          <div class="callout callout-info">
+            <div class="callout-title">Zara · OpenAI GTM</div>
+            <p>"这是我上过的最实用的 AI 课程之一。它教你如何系统性地、可扩展地测量你的 AI 产品是否真的有效。Evals 帮你比较模型、发现失败模式、改善特定领域的性能——强烈推荐！"</p>
+          </div>
+          <div class="callout callout-info">
+            <div class="callout-title">Jacob Carter · CEO, NurtureBoss</div>
+            <p>"通过 Hamel 的方法，我们在关键领域（如日期处理）的错误率降低了超过 60%。这些方法已经成为我们构建和改进 AI 产品的基本流程，形成了持续改进的循环。"</p>
+          </div>
+        </div>
+        <div class="callout callout-warning" style="margin-top:1rem;">
+          <div class="callout-title">Simon Willison（Datasette 创始人）</div>
+          <p>"Hamel 提供了我一直需要的 Evals 教程，附带非常详尽的案例研究……Hamel 的内容非常出色，但有点荒谬的是，他一个人在单枪匹马地弥补我们整个行业在这个话题上的内容空白！"</p>
+        </div>
+      </div>
+
+      <!-- 测验 -->
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-title">🧠 章节测验</div>
+          <div class="quiz-score-badge">0/3 答对</div>
+        </div>
+        <div id="quiz-course">
+          <div class="quiz-question" data-correct="2">
+            <div class="quiz-q-num">第 1 题 · 单选</div>
+            <div class="quiz-q-text">Canva Magic Switch 团队的开发顺序是什么？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 先构建功能 → 上线后收集用户反馈 → 再设计 Eval</div>
+              <div class="quiz-option">B. 先做原型 → 用 Likert 评分收集感受 → 再转化为 Eval 指标</div>
+              <div class="quiz-option">C. 先定义 Eval 标准（5 个维度）→ 再开始功能实现 → 用 Eval 做 Prompt 回归测试</div>
+              <div class="quiz-option">D. 先 Fine-tuning → 再设计 Eval 验证效果</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！Canva 完全颠覆了传统流程：Eval 先行，实现后行。这保证了每次 Prompt 变更都有客观的回归测试，而不是靠感觉。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是 C。Canva 的核心创新就是把 Eval 设计提前到实现之前，并用 Eval 做 Prompt 变更的回归测试。</div>
+          </div>
+          <div class="quiz-question" data-correct="1">
+            <div class="quiz-q-num">第 2 题 · 单选</div>
+            <div class="quiz-q-text">三个海湾（Three Gulfs）模型中，"Gulf of Specification" 描述的是什么？</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 模型在新数据上泛化失败，需要 Fine-tuning</div>
+              <div class="quiz-option">B. 开发者无法完整地用 Prompt 表达真实意图，很多时候只有看到不满意的输出才意识到"我真正想要的是什么"</div>
+              <div class="quiz-option">C. 数据太少导致无法建立可靠的 Eval 标准</div>
+              <div class="quiz-option">D. 团队之间对好坏标准没有共识，评估标准不统一</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确！Gulf of Specification 是开发者 ↔ LLM Pipeline 之间的鸿沟，本质是意图的隐性——Prompt 永远无法完全捕捉你真实想要的东西，你只能通过看失败来逐步揭示。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是 B。三个海湾分别是：理解的鸿沟（开发者↔数据）、规范的鸿沟（开发者↔LLM）、泛化的鸿沟（数据↔LLM）。</div>
+          </div>
+          <div class="quiz-question" data-correct="0">
+            <div class="quiz-q-num">第 3 题 · 判断</div>
+            <div class="quiz-q-text">课程认为，对于提升 AI 产品质量，Fine-tuning 通常应该是第一个尝试的手段，因为它直接修改了模型本身。</div>
+            <div class="quiz-options">
+              <div class="quiz-option">A. 错误</div>
+              <div class="quiz-option">B. 正确</div>
+            </div>
+            <div class="quiz-feedback fb-correct">✅ 正确（答"错误"）！课程明确强调：改进应该按成本从低到高——先 Prompt 工程，再架构调整，最后才是 Fine-tuning。Fine-tuning 是最后手段，只有在确认是 Gulf of Generalization 问题时才考虑。跳过低成本手段直接 Fine-tuning 是最常见的浪费。</div>
+            <div class="quiz-feedback fb-wrong">❌ 错误。正确答案是"错误"。Fine-tuning 成本高、周期长，而且 80% 的问题 Prompt 工程就能解决。课程强烈建议从最小干预开始，按 Prompt → 架构 → Fine-tuning 的顺序尝试。</div>
+          </div>
+        </div>
+        <div class="quiz-result">
+          <div class="quiz-result-score"></div>
+          <div class="quiz-result-msg"></div>
+          <button class="btn-reset">重新作答</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end #content -->
+</div><!-- end #main -->
+
+<script>
+  const pages = ['home','what','why','trace','error','three-levels','passfail','expert','judge','dataset','rag','production','mistakes','pm','faq','course'];
+  let currentIdx = 0;
+  let visited = new Set([0]);
+
+  function showPage(name, navEl) {
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+    // Show target
+    const page = document.getElementById('page-' + name);
+    if (page) page.classList.add('active');
+    if (navEl) navEl.classList.add('active');
+
+    // Update state
+    currentIdx = pages.indexOf(name);
+    visited.add(currentIdx);
+
+    // Update breadcrumb
+    if (navEl) {
+      document.getElementById('breadcrumb').textContent = navEl.textContent.trim();
+    }
+
+    // Update progress
+    const pct = Math.round((visited.size / pages.length) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-text').textContent = visited.size + '/' + pages.length;
+
+    // Scroll to top
+    document.getElementById('content').scrollTop = 0;
+  }
+
+  function navNext() {
+    if (currentIdx < pages.length - 1) {
+      const next = pages[currentIdx + 1];
+      const navEl = document.querySelector(`[onclick*="${next}"]`);
+      showPage(next, navEl);
+    }
+  }
+
+  function navPrev() {
+    if (currentIdx > 0) {
+      const prev = pages[currentIdx - 1];
+      const navEl = document.querySelector(`[onclick*="${prev}"]`);
+      showPage(prev, navEl);
+    }
+  }
+
+  function switchTab(tabEl, contentId) {
+    // Find all tabs and contents in same container
+    const tabsEl = tabEl.closest('.tabs');
+    tabsEl.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tabEl.classList.add('active');
+
+    // Find all tab-contents that are siblings
+    const parent = tabsEl.parentElement;
+    parent.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById(contentId).classList.add('active');
+  }
+
+  function initQuiz(quizId) {
+    const container = document.getElementById(quizId);
+    if (!container) return;
+    const questions = container.querySelectorAll('.quiz-question');
+    const section = container.closest('.quiz-section');
+    const result = section.querySelector('.quiz-result');
+    const badge = section.querySelector('.quiz-score-badge');
+    let score = 0;
+    let answered = 0;
+    const total = questions.length;
+
+    questions.forEach((q) => {
+      const options = q.querySelectorAll('.quiz-option');
+      const feedbacks = q.querySelectorAll('.quiz-feedback');
+      const correct = parseInt(q.dataset.correct);
+
+      options.forEach((opt, oi) => {
+        opt.addEventListener('click', function() {
+          if (q.classList.contains('answered')) return;
+          q.classList.add('answered');
+          options.forEach(o => o.classList.add('disabled'));
+
+          const isCorrect = oi === correct;
+          if (isCorrect) {
+            opt.classList.add('correct');
+            q.classList.add('answered-correct');
+            score++;
+          } else {
+            opt.classList.add('wrong');
+            q.classList.add('answered-wrong');
+            options[correct].classList.add('show-correct');
+          }
+
+          feedbacks.forEach(fb => {
+            if ((isCorrect && fb.classList.contains('fb-correct')) ||
+                (!isCorrect && fb.classList.contains('fb-wrong'))) {
+              fb.classList.add('show');
+            }
+          });
+
+          answered++;
+          if (badge) badge.textContent = score + '/' + answered + ' 答对';
+
+          if (answered === total) {
+            setTimeout(() => {
+              result.classList.add('show');
+              const pct = score / total;
+              result.querySelector('.quiz-result-score').textContent = score + ' / ' + total;
+              result.querySelector('.quiz-result-msg').textContent =
+                pct === 1 ? '🎉 满分！本章掌握扎实，继续保持。' :
+                pct >= 0.6 ? '👍 基本掌握，建议回顾答错的题目。' :
+                '📖 建议重新阅读本章节后再次作答。';
+            }, 400);
+          }
+        });
+      });
+    });
+
+    const resetBtn = section.querySelector('.btn-reset');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', function() {
+        score = 0; answered = 0;
+        questions.forEach(q => {
+          q.classList.remove('answered','answered-correct','answered-wrong');
+          q.querySelectorAll('.quiz-option').forEach(o => {
+            o.classList.remove('correct','wrong','disabled','show-correct');
+          });
+          q.querySelectorAll('.quiz-feedback').forEach(fb => {
+            fb.classList.remove('show');
+          });
+        });
+        result.classList.remove('show');
+        if (badge) badge.textContent = '0/' + total + ' 答对';
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    ['what','why','trace','error','three-levels','passfail','expert','judge','dataset','rag','production','mistakes','pm','faq','course'].forEach(id => {
+      initQuiz('quiz-' + id);
+    });
+  });
+</script>
+
+</body>
+</html>

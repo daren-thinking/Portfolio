@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daren Thinking — AI Product & Eval Portfolio</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;--bg2:#12121a;--surface:#1a1a28;--surface2:#222236;
+  --border:#2a2a42;--border2:#3a3a55;
+  --accent:#6366f1;--accent-soft:rgba(99,102,241,.12);--accent-glow:rgba(99,102,241,.25);
+  --green:#10b981;--green-soft:rgba(16,185,129,.12);
+  --cyan:#06b6d4;--cyan-soft:rgba(6,182,212,.12);
+  --amber:#f59e0b;--amber-soft:rgba(245,158,11,.12);
+  --pink:#ec4899;--pink-soft:rgba(236,72,153,.12);
+  --orange:#f97316;--orange-soft:rgba(249,115,22,.12);
+  --text:#e8eaf0;--text2:#9ca3b8;--text3:#636882;
+  --radius:12px;--radius-lg:20px;
+}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,"PingFang SC","SF Pro Display","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+
+/* Noise texture overlay */
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0}
+
+/* Animated gradient orbs */
+.orb{position:fixed;border-radius:50%;filter:blur(100px);opacity:.08;pointer-events:none;z-index:0}
+.orb-1{width:600px;height:600px;background:var(--accent);top:-200px;right:-100px;animation:float 20s ease-in-out infinite}
+.orb-2{width:500px;height:500px;background:var(--cyan);bottom:-150px;left:-100px;animation:float 25s ease-in-out infinite reverse}
+.orb-3{width:400px;height:400px;background:var(--pink);top:50%;left:50%;transform:translate(-50%,-50%);animation:float 30s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translate(0,0)}25%{transform:translate(30px,-40px)}50%{transform:translate(-20px,30px)}75%{transform:translate(40px,20px)}}
+
+.container{max-width:1100px;margin:0 auto;padding:0 32px;position:relative;z-index:1}
+
+/* ===== NAV ===== */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:rgba(10,10,15,.75);border-bottom:1px solid rgba(42,42,66,.5);transition:all .3s}
+nav .container{display:flex;align-items:center;justify-content:space-between;height:64px}
+.nav-logo{font-size:18px;font-weight:700;letter-spacing:-.5px;background:linear-gradient(135deg,var(--accent),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s;position:relative}
+.nav-links a:hover{color:var(--text)}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--accent);transition:width .3s}
+.nav-links a:hover::after{width:100%}
+
+/* ===== HERO ===== */
+.hero{min-height:100vh;display:flex;align-items:center;padding-top:64px}
+.hero-content{max-width:720px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:var(--accent-soft);border:1px solid rgba(99,102,241,.2);border-radius:100px;font-size:12px;font-weight:600;color:var(--accent);margin-bottom:24px;letter-spacing:.5px}
+.hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-size:clamp(40px,6vw,64px);font-weight:800;line-height:1.1;margin-bottom:20px;letter-spacing:-1.5px}
+.hero h1 .gradient{background:linear-gradient(135deg,var(--accent) 0%,var(--cyan) 50%,var(--pink) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% auto;animation:gradient-shift 6s ease infinite}
+@keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.hero-desc{font-size:18px;color:var(--text2);line-height:1.8;margin-bottom:36px;max-width:600px}
+.hero-actions{display:flex;gap:16px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:600;border:none;cursor:pointer;transition:all .25s;text-decoration:none;font-family:inherit}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#4f46e5);color:#fff;box-shadow:0 4px 24px var(--accent-glow)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px var(--accent-glow)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border);backdrop-filter:blur(10px)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--text);background:var(--accent-soft)}
+
+/* ===== STATS ===== */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin:80px 0;background:var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.stat{background:var(--bg2);padding:32px;text-align:center}
+.stat-num{font-size:36px;font-weight:800;letter-spacing:-1px;margin-bottom:4px}
+.stat-num.c1{color:var(--accent)}.stat-num.c2{color:var(--green)}.stat-num.c3{color:var(--cyan)}.stat-num.c4{color:var(--amber)}
+.stat-label{font-size:13px;color:var(--text3);font-weight:500}
+
+/* ===== SECTION COMMON ===== */
+.section-header{text-align:center;margin-bottom:48px}
+.section-tag{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;padding:6px 16px;border-radius:100px;margin-bottom:16px}
+.section-tag.purple{background:var(--accent-soft);color:var(--accent)}
+.section-tag.green{background:var(--green-soft);color:var(--green)}
+.section-tag.cyan{background:var(--cyan-soft);color:var(--cyan)}
+.section-title{font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-1px;margin-bottom:12px}
+.section-desc{font-size:16px;color:var(--text2);max-width:600px;margin:0 auto;line-height:1.7}
+
+/* ===== PROJECTS ===== */
+#projects{padding:100px 0}
+.project-grid{display:grid;gap:24px}
+.project-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:all .35s;position:relative}
+.project-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.project-card-inner{display:grid;grid-template-columns:1fr 1fr;min-height:380px}
+.project-preview{position:relative;overflow:hidden;background:var(--bg2)}
+.project-preview img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.project-card:hover .project-preview img{transform:scale(1.05)}
+.project-preview-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--surface2),var(--bg2));position:relative}
+.preview-mockup{width:85%;max-width:360px;aspect-ratio:16/10;background:var(--bg);border-radius:8px;border:1px solid var(--border);overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.mockup-bar{height:28px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 10px;gap:6px}
+.mockup-dot{width:8px;height:8px;border-radius:50%}
+.mockup-dot.r{background:#ff5f57}.mockup-dot.y{background:#febc2e}.mockup-dot.g{background:#28c840}
+.mockup-body{padding:12px;display:flex;flex-direction:column;gap:8px}
+.mockup-line{height:6px;border-radius:3px;background:var(--surface2)}
+.mockup-line.w60{width:60%}.mockup-line.w80{width:80%}.mockup-line.w45{width:45%}.mockup-line.w70{width:70%}
+.mockup-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px}
+.mockup-box{height:40px;border-radius:4px;background:var(--surface2);border:1px solid var(--border)}
+.project-info{padding:40px;display:flex;flex-direction:column;justify-content:center}
+.project-status{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+.project-status.live{color:var(--green)}.project-status.wip{color:var(--amber)}
+.project-status .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.project-name{font-size:24px;font-weight:700;margin-bottom:10px;letter-spacing:-.5px}
+.project-desc{font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:20px}
+.project-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+.tag{padding:4px 12px;border-radius:100px;font-size:11px;font-weight:600;border:1px solid}
+.tag.t-eval{background:var(--accent-soft);border-color:rgba(99,102,241,.2);color:var(--accent)}
+.tag.t-llm{background:var(--cyan-soft);border-color:rgba(6,182,212,.2);color:var(--cyan)}
+.tag.t-product{background:var(--green-soft);border-color:rgba(16,185,129,.2);color:var(--green)}
+.tag.t-interactive{background:var(--pink-soft);border-color:rgba(236,72,153,.2);color:var(--pink)}
+.tag.t-bench{background:var(--amber-soft);border-color:rgba(245,158,11,.2);color:var(--amber)}
+.project-link{display:inline-flex;align-items:center;gap:8px;color:var(--accent);font-size:14px;font-weight:600;text-decoration:none;transition:gap .3s}
+.project-link:hover{gap:12px}
+.project-link svg{width:16px;height:16px;transition:transform .3s}
+.project-link:hover svg{transform:translateX(4px)}
+
+/* Coming soon card */
+.coming-soon{background:var(--surface);border:1px dashed var(--border);border-radius:var(--radius-lg);padding:60px 40px;text-align:center;transition:all .3s}
+.coming-soon:hover{border-color:var(--border2)}
+.coming-soon-icon{font-size:48px;margin-bottom:16px;opacity:.6}
+.coming-soon h3{font-size:20px;font-weight:600;margin-bottom:8px;color:var(--text2)}
+.coming-soon p{font-size:14px;color:var(--text3);max-width:400px;margin:0 auto}
+
+/* ===== ABOUT ===== */
+#about{padding:100px 0}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.about-content h3{font-size:20px;font-weight:700;margin-bottom:16px}
+.about-content p{font-size:15px;color:var(--text2);line-height:1.8;margin-bottom:16px}
+.skill-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.skill-tag{padding:8px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text2);transition:all .2s}
+.skill-tag:hover{border-color:var(--accent);color:var(--text)}
+.about-visual{display:flex;flex-direction:column;gap:12px}
+.focus-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;display:flex;align-items:center;gap:16px;transition:all .25s}
+.focus-card:hover{border-color:var(--accent);transform:translateX(4px)}
+.focus-icon{font-size:28px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;border-radius:12px;flex-shrink:0}
+.focus-icon.f1{background:var(--accent-soft)}.focus-icon.f2{background:var(--green-soft)}.focus-icon.f3{background:var(--cyan-soft)}.focus-icon.f4{background:var(--amber-soft)}
+.focus-title{font-size:15px;font-weight:600;margin-bottom:2px}
+.focus-desc{font-size:12px;color:var(--text3)}
+
+/* ===== FOOTER ===== */
+footer{border-top:1px solid var(--border);padding:40px 0;text-align:center}
+footer p{font-size:13px;color:var(--text3)}
+footer a{color:var(--accent);text-decoration:none}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .container{padding:0 20px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .project-card-inner{grid-template-columns:1fr}
+  .project-preview-placeholder{min-height:200px}
+  .about-grid{grid-template-columns:1fr}
+  .nav-links{gap:20px}
+  .nav-links a{font-size:13px}
+  .hero-actions{flex-direction:column}
+  .btn{justify-content:center}
+}
+@media(max-width:480px){
+  .stats{grid-template-columns:1fr}
+  .nav-links{display:none}
+}
+
+/* Scroll reveal */
+.reveal{opacity:0;transform:translateY(30px);transition:all .6s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<nav>
+  <div class="container">
+    <div class="nav-logo">Daren Thinking</div>
+    <div class="nav-links">
+      <a href="#projects">作品</a>
+      <a href="#about">关于</a>
+      <a href="https://github.com/daren-thinking" target="_blank">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge"><span class="dot"></span> Open for Collaboration</div>
+      <h1>构建 <span class="gradient">AI 产品质量</span>的基础设施</h1>
+      <p class="hero-desc">专注于 LLM 评估体系、模型策略产品与 AI 应用质量工程。用系统化的方法让 AI 产品从"能用"到"好用"。</p>
+      <div class="hero-actions">
+        <a href="#projects" class="btn btn-primary">查看作品 ↓</a>
+        <a href="#about" class="btn btn-ghost">了解更多</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <div class="stats reveal">
+    <div class="stat"><div class="stat-num c1" data-target="22">0</div><div class="stat-label">深度知识章节</div></div>
+    <div class="stat"><div class="stat-num c2" data-target="6">0</div><div class="stat-label">核心方法论体系</div></div>
+    <div class="stat"><div class="stat-num c3" data-target="30">0</div><div class="stat-label">Quiz 交互检测</div></div>
+    <div class="stat"><div class="stat-num c4" data-target="1">0</div><div class="stat-label">公开作品项目</div></div>
+  </div>
+</div>
+
+<section id="projects">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag purple">Projects</div>
+      <div class="section-title">作品展示</div>
+      <div class="section-desc">专注 AI 产品评估与质量工程领域，持续输出可落地的工具与知识体系</div>
+    </div>
+
+    <div class="project-grid">
+      <!-- Project 1: LLM Evals -->
+      <div class="project-card reveal">
+        <div class="project-card-inner">
+          <div class="project-preview">
+            <div class="project-preview-placeholder">
+              <div class="preview-mockup">
+                <div class="mockup-bar"><span class="mockup-dot r"></span><span class="mockup-dot y"></span><span class="mockup-dot g"></span></div>
+                <div class="mockup-body">
+                  <div class="mockup-line w60" style="background:var(--accent);opacity:.4"></div>
+                  <div class="mockup-line w80"></div>
+                  <div class="mockup-line w45"></div>
+                  <div class="mockup-grid">
+                    <div class="mockup-box" style="border-color:var(--accent);opacity:.6"></div>
+                    <div class="mockup-box" style="border-color:var(--green);opacity:.6"></div>
+                    <div class="mockup-box" style="border-color:var(--amber);opacity:.6"></div>
+                    <div class="mockup-box" style="border-color:var(--cyan);opacity:.6"></div>
+                  </div>
+                  <div class="mockup-line w70"></div>
+                  <div class="mockup-line w45"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="project-info">
+            <div class="project-status live"><span class="dot"></span> LIVE</div>
+            <div class="project-name">LLM Evals 知识平台</div>
+            <div class="project-desc">从入门到精通的 LLM 评估知识体系。22 个深度章节，覆盖 Error Analysis、LLM-as-Judge、CI/CD 评估门等完整方法论，附带 30+ 交互式 Quiz。基于 Hamel Husain（Parlance Labs）帮助 30+ 公司落地 Eval 的第一手经验深度提炼。</div>
+            <div class="project-tags">
+              <span class="tag t-eval">Evaluation</span>
+              <span class="tag t-llm">LLM</span>
+              <span class="tag t-product">Product Quality</span>
+              <span class="tag t-interactive">Interactive</span>
+            </div>
+            <a href="projects/llm-evals/index.html" class="project-link">
+              进入体验
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coming Soon -->
+      <div class="coming-soon reveal">
+        <div class="coming-soon-icon">🚀</div>
+        <h3>更多作品即将上线</h3>
+        <p>TABench 评测框架、AI 产品质量分析工具、模型策略分析报告……持续更新中</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag green">About</div>
+      <div class="section-title">关于我</div>
+    </div>
+    <div class="about-grid reveal">
+      <div class="about-content">
+        <h3>AI 产品 × 评估工程</h3>
+        <p>专注于大模型产品的质量工程与评估体系建设。相信好的 AI 产品不是"调出来的"，而是"评出来的"——系统化的评估是 AI 产品从 Demo 走向生产级的关键基础设施。</p>
+        <p>关注领域：LLM Evaluation、Error Analysis 方法论、模型策略产品、AI 应用可观测性、Benchmark 设计。</p>
+        <div class="skill-tags">
+          <span class="skill-tag">LLM Evaluation</span>
+          <span class="skill-tag">Product Strategy</span>
+          <span class="skill-tag">Error Analysis</span>
+          <span class="skill-tag">Benchmark Design</span>
+          <span class="skill-tag">AI Quality Engineering</span>
+          <span class="skill-tag">Data Analysis</span>
+        </div>
+      </div>
+      <div class="about-visual">
+        <div class="focus-card"><div class="focus-icon f1">🎯</div><div><div class="focus-title">评估体系建设</div><div class="focus-desc">从 Error Analysis 到 LLM-as-Judge 的完整方法论</div></div></div>
+        <div class="focus-card"><div class="focus-icon f2">📊</div><div><div class="focus-title">Benchmark 设计</div><div class="focus-desc">面向真实业务场景的评测基准设计与实施</div></div></div>
+        <div class="focus-card"><div class="focus-icon f3">🔬</div><div><div class="focus-title">模型策略分析</div><div class="focus-desc">帮助产品团队做出数据驱动的模型决策</div></div></div>
+        <div class="focus-card"><div class="focus-icon f4">🛠️</div><div><div class="focus-title">质量工程工具</div><div class="focus-desc">构建降低评估摩擦的产品化工具</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>© 2026 Daren Thinking · Built with ❤️ · Hosted on <a href="https://pages.github.com" target="_blank">GitHub Pages</a></p>
+  </div>
+</footer>
+
+<script>
+// Scroll reveal
+const revealEls = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      // Animate numbers
+      entry.target.querySelectorAll('[data-target]').forEach(el => {
+        const target = parseInt(el.dataset.target);
+        let current = 0;
+        const step = Math.max(1, Math.floor(target / 30));
+        const timer = setInterval(() => {
+          current += step;
+          if (current >= target) { current = target; clearInterval(timer); }
+          el.textContent = current + (target >= 30 ? '+' : '');
+        }, 40);
+      });
+    }
+  });
+}, { threshold: 0.15 });
+revealEls.forEach(el => revealObserver.observe(el));
+
+// Nav shadow on scroll
+window.addEventListener('scroll', () => {
+  document.querySelector('nav').style.boxShadow = window.scrollY > 10 ? '0 4px 30px rgba(0,0,0,.3)' : 'none';
+});
+</script>
+</body>
+</html>
