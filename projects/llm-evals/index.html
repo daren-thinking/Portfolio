@@ -1080,78 +1080,14 @@
     <!-- HOME -->
     <div class="page active" id="page-home">
 
-      <!-- ===== HERO: 价值主张 ===== -->
-      <div style="text-align:center;padding:8px 0 40px;">
-        <div style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:600;background:rgba(16,185,129,0.12);color:var(--green);letter-spacing:0.5px;margin-bottom:16px;">🔥 基于帮助 30+ 公司落地 Eval 的实战经验</div>
-        <h1 style="font-size:32px;font-weight:800;line-height:1.25;margin-bottom:14px;letter-spacing:-0.5px;">不会做 Eval 的 AI 团队，<br><span style="background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">永远在盲飞</span></h1>
-        <p style="font-size:15px;color:var(--text2);max-width:600px;margin:0 auto 24px;line-height:1.8;">你的模型上线了，用户说"不好用"——但你不知道哪里不好、有多不好、改了是否变好。<br>这个平台帮你<strong style="color:var(--text)">从零建立系统化的 LLM 评估能力</strong>，让每一次改动都有据可依。</p>
-        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-          <button class="btn btn-primary" onclick="showPage('what', document.querySelector('[onclick*=\"what\"]'))" style="padding:10px 24px;font-size:14px;">🚀 开始学习</button>
-          <button class="btn btn-outline" onclick="document.getElementById('skills-section').scrollIntoView({behavior:'smooth'})" style="padding:10px 24px;font-size:14px;">📋 我能学到什么？</button>
-        </div>
-      </div>
-
-      <!-- ===== 你是否遇到这些问题？ ===== -->
-      <div class="section">
-        <div class="section-title">😫 你是否遇到这些问题？</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px;">
-          <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:10px;padding:16px 18px;">
-            <div style="font-size:14px;font-weight:600;color:var(--red);margin-bottom:6px;">❌ 模型上线后用户说"不好用"</div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.7;">但你无法量化"不好用"到底是哪个环节、什么类型的问题，更无法追踪改进效果。</div>
-          </div>
-          <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:10px;padding:16px 18px;">
-            <div style="font-size:14px;font-weight:600;color:var(--red);margin-bottom:6px;">❌ 改了 Prompt 却不知道有没有变好</div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.7;">每次调整都是"凭感觉"，缺乏 Pass/Fail 的客观判断机制，团队对改动效果各执一词。</div>
-          </div>
-          <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:10px;padding:16px 18px;">
-            <div style="font-size:14px;font-weight:600;color:var(--red);margin-bottom:6px;">❌ 用了通用 Benchmark 但对业务毫无指导</div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.7;">MMLU/HumanEval 分数很高，但线上表现依然拉胯——通用指标和业务场景之间存在巨大鸿沟。</div>
-          </div>
-          <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:10px;padding:16px 18px;">
-            <div style="font-size:14px;font-weight:600;color:var(--red);margin-bottom:6px;">❌ 想用 LLM 自动评分但不知道能不能信</div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.7;">LLM-as-Judge 看起来很美好，但没有人工标注做校准，自动评分系统可能在"自嗨"。</div>
-          </div>
-        </div>
-        <div class="callout callout-success" style="margin-top:16px;">
-          <div class="callout-title">✅ 这个平台解决的核心问题</div>
-          <p>帮助 AI 产品团队建立<strong>可量化、可迭代、可信赖</strong>的评估体系。不管你是 PM、算法工程师还是技术负责人，完成这套知识体系后，你将知道<strong>如何把"AI 好不好用"变成一个可测量的工程问题</strong>。</p>
-        </div>
-      </div>
-
-      <!-- ===== 学完你将掌握 ===== -->
-      <div class="section" id="skills-section">
-        <div class="section-title">🎯 学完你将掌握这些核心技能</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center;transition:all 0.2s;" onmouseenter="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseleave="this.style.borderColor='var(--border)';this.style.transform='none'">
-            <div style="font-size:28px;margin-bottom:10px;">🔬</div>
-            <div style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text);">Error Analysis 方法论</div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.6;">从 Trace 中系统发现真实失败模式，而不是猜测。每个 Eval 项目的起点。</div>
-          </div>
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center;transition:all 0.2s;" onmouseenter="this.style.borderColor='var(--green)';this.style.transform='translateY(-2px)'" onmouseleave="this.style.borderColor='var(--border)';this.style.transform='none'">
-            <div style="font-size:28px;margin-bottom:10px;">📊</div>
-            <div style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text);">三层评估体系设计</div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.6;">Unit → Human+Model → A/B，知道什么时候用哪一层，如何搭建完整闭环。</div>
-          </div>
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center;transition:all 0.2s;" onmouseenter="this.style.borderColor='var(--accent2)';this.style.transform='translateY(-2px)'" onmouseleave="this.style.borderColor='var(--border)';this.style.transform='none'">
-            <div style="font-size:28px;margin-bottom:10px;">🤖</div>
-            <div style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text);">LLM-as-Judge 落地</div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.6;">7 步 Critique Shadowing 方法，构建对齐人类判断的 LLM 自动评判系统。</div>
-          </div>
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center;transition:all 0.2s;" onmouseenter="this.style.borderColor='var(--accent3)';this.style.transform='translateY(-2px)'" onmouseleave="this.style.borderColor='var(--border)';this.style.transform='none'">
-            <div style="font-size:28px;margin-bottom:10px;">✅</div>
-            <div style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text);">Pass/Fail 评判设计</div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.6;">为什么 1-5 分评分是反模式？如何设计清晰可操作的二元判断标准。</div>
-          </div>
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center;transition:all 0.2s;" onmouseenter="this.style.borderColor='var(--yellow)';this.style.transform='translateY(-2px)'" onmouseleave="this.style.borderColor='var(--border)';this.style.transform='none'">
-            <div style="font-size:28px;margin-bottom:10px;">📦</div>
-            <div style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text);">评估数据集构建</div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.6;">从业务数据中系统构建 Golden Dataset，掌握采样策略、标注协议和质量控制。</div>
-          </div>
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center;transition:all 0.2s;" onmouseenter="this.style.borderColor='var(--green)';this.style.transform='translateY(-2px)'" onmouseleave="this.style.borderColor='var(--border)';this.style.transform='none'">
-            <div style="font-size:28px;margin-bottom:10px;">🚀</div>
-            <div style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text);">CI/CD 评估门</div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.6;">将 Eval 嵌入发布流程，每次上线前自动跑评估，杜绝"盲发"带来的回归。</div>
-          </div>
+      <!-- ===== HERO ===== -->
+      <div style="text-align:center;padding:8px 0 32px;">
+        <div style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:600;background:rgba(16,185,129,0.12);color:var(--green);letter-spacing:0.5px;margin-bottom:12px;">基于帮助 30+ 公司落地 Eval 的实战经验</div>
+        <h1 style="font-size:28px;font-weight:800;line-height:1.3;margin-bottom:12px;letter-spacing:-0.3px;">不会做 Eval 的 AI 团队，<span style="background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">永远在盲飞</span></h1>
+        <p style="font-size:14px;color:var(--text2);max-width:520px;margin:0 auto 20px;line-height:1.7;">模型上线了，用户说"不好用"——但你不知道哪里不好、改了是否变好。<br>这个平台帮你<strong style="color:var(--text)">从零建立系统化的 LLM 评估能力</strong>。</p>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="showPage('what', document.querySelector('[onclick*=\"what\"]'))" style="padding:9px 22px;font-size:13px;">🚀 开始学习</button>
+          <button class="btn btn-outline" onclick="document.getElementById('roadmap-section').scrollIntoView({behavior:'smooth'})" style="padding:9px 22px;font-size:13px;">📋 查看学习路径</button>
         </div>
       </div>
 
@@ -1159,15 +1095,15 @@
       <div class="stat-row">
         <div class="stat-card">
           <div class="stat-num">60-80%</div>
-          <div class="stat-label">顶尖团队投入 Eval 的开发时间占比</div>
+          <div class="stat-label">顶尖团队投入 Eval 的时间占比</div>
         </div>
         <div class="stat-card">
           <div class="stat-num">13</div>
-          <div class="stat-label">深度知识章节，从入门到精通</div>
+          <div class="stat-label">深度章节，从入门到精通</div>
         </div>
         <div class="stat-card">
           <div class="stat-num">30+</div>
-          <div class="stat-label">交互式 Quiz，边学边检测掌握度</div>
+          <div class="stat-label">交互式 Quiz 检测掌握度</div>
         </div>
         <div class="stat-card">
           <div class="stat-num">Pass/Fail</div>
@@ -1175,131 +1111,64 @@
         </div>
       </div>
 
-      <!-- ===== 适合谁学？ ===== -->
-      <div class="section">
-        <div class="section-title">👥 适合谁学？</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;">
-            <div style="font-size:20px;margin-bottom:8px;">🎯</div>
-            <div style="font-size:14px;font-weight:600;margin-bottom:6px;">AI 产品经理</div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.6;">你是最重要的评估决策者——学会如何定义"好"、如何读评测报告、如何推动团队建立评估文化。</div>
-          </div>
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;">
-            <div style="font-size:20px;margin-bottom:8px;">⚙️</div>
-            <div style="font-size:14px;font-weight:600;margin-bottom:6px;">算法 / AI 工程师</div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.6;">从"跑通了就上线"到"跑得好才上线"——掌握 Eval Pipeline 搭建、Judge 校准、CI/CD 集成。</div>
-          </div>
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;">
-            <div style="font-size:20px;margin-bottom:8px;">📋</div>
-            <div style="font-size:14px;font-weight:600;margin-bottom:6px;">技术负责人 / TL</div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.6;">了解评估体系的全景架构，制定团队级的 Eval 规范，让质量成为团队基因。</div>
-          </div>
+      <!-- ===== 这个平台帮你解决什么 ===== -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:24px;">
+        <div style="font-size:14px;font-weight:700;margin-bottom:12px;">🎯 学完后你将能够</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;">
+          <div style="display:flex;align-items:baseline;gap:8px;font-size:13px;line-height:1.6;"><span style="color:var(--green);flex-shrink:0;">✓</span><span>用 <strong>Error Analysis</strong> 从 Trace 中系统发现真实失败模式</span></div>
+          <div style="display:flex;align-items:baseline;gap:8px;font-size:13px;line-height:1.6;"><span style="color:var(--green);flex-shrink:0;">✓</span><span>搭建 <strong>Unit → Human+Model → A/B</strong> 三层评估架构</span></div>
+          <div style="display:flex;align-items:baseline;gap:8px;font-size:13px;line-height:1.6;"><span style="color:var(--green);flex-shrink:0;">✓</span><span>用 <strong>Critique Shadowing</strong> 7 步法落地 LLM-as-Judge</span></div>
+          <div style="display:flex;align-items:baseline;gap:8px;font-size:13px;line-height:1.6;"><span style="color:var(--green);flex-shrink:0;">✓</span><span>设计 <strong>Pass/Fail</strong> 标准，告别模糊的 1-5 分评分</span></div>
+          <div style="display:flex;align-items:baseline;gap:8px;font-size:13px;line-height:1.6;"><span style="color:var(--green);flex-shrink:0;">✓</span><span>从业务数据构建 <strong>Golden Dataset</strong>，掌握采样与标注</span></div>
+          <div style="display:flex;align-items:baseline;gap:8px;font-size:13px;line-height:1.6;"><span style="color:var(--green);flex-shrink:0;">✓</span><span>把 Eval 嵌入 <strong>CI/CD</strong>，每次上线自动跑评估</span></div>
         </div>
       </div>
 
       <!-- ===== 学习路径 ===== -->
-      <div class="section">
-        <div class="section-title">🗺️ 推荐学习路径</div>
-        <div class="steps">
-          <div class="step" onclick="showPage('what', document.querySelector('[onclick*=\"what\"]'))" style="cursor:pointer;">
-            <div class="step-num">1</div>
-            <div class="step-body">
-              <div class="step-title">基础概念 <span class="badge badge-level1">入门</span></div>
-              <div class="step-desc">Eval 是什么、为什么必须做、Trace 的定义。15 分钟建立正确心智模型。</div>
-            </div>
-          </div>
-          <div class="step" onclick="showPage('error', document.querySelector('[onclick*=\"error\"]'))" style="cursor:pointer;">
-            <div class="step-num">2</div>
-            <div class="step-body">
-              <div class="step-title">Error Analysis <span class="badge badge-level2">核心 ★★★</span></div>
-              <div class="step-desc">整个体系的灵魂——人工读 100+ Trace，从数据中发现真实的失败模式。所有后续步骤都以此为起点。</div>
-            </div>
-          </div>
-          <div class="step" onclick="showPage('three-levels', document.querySelector('[onclick*=\"three-levels\"]'))" style="cursor:pointer;">
-            <div class="step-num">3</div>
-            <div class="step-body">
-              <div class="step-title">三层体系 + Pass/Fail <span class="badge badge-level2">核心</span></div>
-              <div class="step-desc">搭建 Unit / Human+Model / A/B 三层评估架构。理解为什么 Pass/Fail 优于 1-5 分。</div>
-            </div>
-          </div>
-          <div class="step" onclick="showPage('judge', document.querySelector('[onclick*=\"judge\"]'))" style="cursor:pointer;">
-            <div class="step-num">4</div>
-            <div class="step-body">
-              <div class="step-title">LLM-as-Judge <span class="badge badge-level2">进阶</span></div>
-              <div class="step-desc">7 步 Critique Shadowing 方法论，构建可信赖的自动评判系统。必须先有人工标注基础。</div>
-            </div>
-          </div>
-          <div class="step" onclick="showPage('production', document.querySelector('[onclick*=\"production\"]'))" style="cursor:pointer;">
-            <div class="step-num">5</div>
-            <div class="step-body">
-              <div class="step-title">生产环境与 CI/CD <span class="badge badge-level3">实战</span></div>
-              <div class="step-desc">把 Eval 嵌入发布流程和线上监控，每次改动都有客观数据作为 Go/No-Go 的依据。</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ===== 知识体系全景 ===== -->
-      <div class="section">
-        <div class="section-title">📚 知识体系全景</div>
+      <div class="section" id="roadmap-section">
+        <div class="section-title">🗺️ 学习路径</div>
         <div class="card-grid">
-          <div class="card" onclick="showPage('what', document.querySelector('[onclick*=\"what\"]'))">
+          <div class="card" onclick="showPage('what', document.querySelector('[onclick*=\"what\"]'))" style="cursor:pointer;">
             <div class="card-icon">🔍</div>
-            <div class="card-title">基础概念</div>
-            <div class="card-desc">Eval 是什么、为什么做、Trace 的定义——建立正确的心智模型，避免从一开始就走错方向。</div>
+            <div class="card-title">基础概念 <span class="badge badge-level1" style="font-size:10px;vertical-align:middle;">入门</span></div>
+            <div class="card-desc">Eval 是什么、为什么必须做、Trace 的定义。15 分钟建立正确心智模型。</div>
           </div>
-          <div class="card" onclick="showPage('error', document.querySelector('[onclick*=\"error\"]'))">
+          <div class="card" onclick="showPage('error', document.querySelector('[onclick*=\"error\"]'))" style="cursor:pointer;">
             <div class="card-icon">🔬</div>
-            <div class="card-title">Error Analysis（核心）</div>
-            <div class="card-desc">整个 Eval 体系的起点。不是工具，不是基础设施，而是人工读数据。这是最被低估的核心工作。</div>
+            <div class="card-title">Error Analysis <span class="badge badge-level2" style="font-size:10px;vertical-align:middle;">核心 ★</span></div>
+            <div class="card-desc">体系的灵魂——人工读 100+ Trace，发现真实失败模式。所有后续步骤的起点。</div>
           </div>
-          <div class="card" onclick="showPage('three-levels', document.querySelector('[onclick*=\"three-levels\"]'))">
+          <div class="card" onclick="showPage('three-levels', document.querySelector('[onclick*=\"three-levels\"]'))" style="cursor:pointer;">
             <div class="card-icon">📊</div>
             <div class="card-title">三层 Eval 体系</div>
-            <div class="card-desc">Unit Tests → Human & Model Eval → A/B Testing。三层各有定位，成本递增，使用频率递减。</div>
+            <div class="card-desc">Unit → Human+Model → A/B，三层各有定位，成本递增，使用频率递减。</div>
           </div>
-          <div class="card" onclick="showPage('judge', document.querySelector('[onclick*=\"judge\"]'))">
+          <div class="card" onclick="showPage('judge', document.querySelector('[onclick*=\"judge\"]'))" style="cursor:pointer;">
             <div class="card-icon">🤖</div>
-            <div class="card-title">LLM-as-a-Judge</div>
-            <div class="card-desc">如何用 LLM 自动化评估？Critique Shadowing 方法论：7步从零建立对齐人类判断的 LLM 评判系统。</div>
+            <div class="card-title">LLM-as-Judge <span class="badge badge-level2" style="font-size:10px;vertical-align:middle;">进阶</span></div>
+            <div class="card-desc">7 步 Critique Shadowing 方法论，从零建立对齐人类判断的自动评判系统。</div>
           </div>
-          <div class="card" onclick="showPage('mistakes', document.querySelector('[onclick*=\"mistakes\"]'))">
+          <div class="card" onclick="showPage('mistakes', document.querySelector('[onclick*=\"mistakes\"]'))" style="cursor:pointer;">
             <div class="card-icon">⚠️</div>
             <div class="card-title">常见错误与反模式</div>
-            <div class="card-desc">最贵的错误不是技术失败，而是用错了评估框架。用通用指标、跳过人工标注、过早自动化……</div>
+            <div class="card-desc">用通用指标、跳过人工标注、过早自动化——最贵的错误是用错了评估框架。</div>
           </div>
-          <div class="card" onclick="showPage('pm', document.querySelector('[onclick*=\"pm\"]'))">
+          <div class="card" onclick="showPage('pm', document.querySelector('[onclick*=\"pm\"]'))" style="cursor:pointer;">
             <div class="card-icon">🎯</div>
-            <div class="card-title">产品经理的视角</div>
-            <div class="card-desc">Eval 不只是工程问题。PM 是最重要的 Benevolent Dictator，你的判断力决定了评估体系的质量。</div>
+            <div class="card-title">PM 的视角</div>
+            <div class="card-desc">PM 是最重要的 Benevolent Dictator，你的判断力决定了评估体系的质量。</div>
           </div>
         </div>
       </div>
 
+      <!-- ===== 核心洞察 + 来源 ===== -->
       <div class="callout callout-insight">
         <div class="callout-title">💡 核心洞察</div>
-        <p>大多数 AI 产品失败的根本原因不是模型不够好，而是缺乏健壮的评估系统。没有 Eval，你无法知道改动是否有效，无法系统地改进，无法调试，也无法做精调。Eval 是 AI 产品迭代速度的核心基础设施。</p>
+        <p>大多数 AI 产品失败不是因为模型不够好，而是缺乏评估系统。没有 Eval，你无法知道改动是否有效。Eval 是 AI 产品迭代速度的核心基础设施。</p>
       </div>
 
-      <!-- ===== 知识来源 ===== -->
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:24px;">
-        <div style="font-size:14px;font-weight:700;margin-bottom:14px;">📖 知识来源</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-          <div style="display:flex;gap:14px;align-items:flex-start;">
-            <div style="font-size:24px;flex-shrink:0;">📝</div>
-            <div>
-              <div style="font-size:13px;font-weight:600;margin-bottom:3px;"><a href="https://hamel.dev/blog/posts/evals-faq" target="_blank" style="color:var(--accent);text-decoration:none;">Your AI Product Needs Evals</a></div>
-              <div style="font-size:11px;color:var(--text3);line-height:1.6;">Hamel Husain 的深度 FAQ 博客，回答了 Eval 最常被问到的 20+ 个核心问题。</div>
-            </div>
-          </div>
-          <div style="display:flex;gap:14px;align-items:flex-start;">
-            <div style="font-size:24px;flex-shrink:0;">🎓</div>
-            <div>
-              <div style="font-size:13px;font-weight:600;margin-bottom:3px;"><a href="https://maven.com/parlance-labs/evals" target="_blank" style="color:var(--accent);text-decoration:none;">Parlance Labs Eval 课程</a></div>
-              <div style="font-size:11px;color:var(--text3);line-height:1.6;">帮助 30+ 公司落地 Eval 的付费课程。本平台基于其核心方法论进行深度提炼与知识重组。</div>
-            </div>
-          </div>
-        </div>
+      <div style="display:flex;gap:20px;font-size:11px;color:var(--text3);padding-bottom:8px;">
+        <span>📖 来源：<a href="https://hamel.dev/blog/posts/evals-faq" target="_blank" style="color:var(--accent);text-decoration:none;">Hamel Husain's Evals FAQ</a> · <a href="https://maven.com/parlance-labs/evals" target="_blank" style="color:var(--accent);text-decoration:none;">Parlance Labs 课程 ($3000, 700+ 学员)</a></span>
       </div>
 
     </div>
@@ -3409,416 +3278,266 @@ You are a [领域] 质量评估专家，负责判断 AI 的回答是否达到预
     <!-- Maven 课程深度解析 -->
     <div class="page" id="page-course">
       <div class="page-header">
+        <div class="page-tag tag-foundation">课程解析</div>
         <div class="page-title">🎓 Maven 课程深度解析</div>
-        <div class="page-subtitle">AI Evals For Engineers &amp; PMs — Hamel Husain &amp; Shreya Shankar 主讲</div>
+        <div class="page-desc">AI Evals For Engineers & PMs — Hamel Husain & Shreya Shankar 主讲</div>
       </div>
 
-      <div class="callout callout-info">
-        <div class="callout-title">📌 关于这门课</div>
-        <p>这是 Maven 平台评分最高的 AI 技术课程之一（4.8/5，700+ 学员）。4 周 · 8 节课 · Cohort 制。主讲人 Hamel Husain 和 Shreya Shankar 合计拥有 25+ 年 AI 系统实战经验，曾就职于 Google、GitHub、Hugging Face。课程价格 $3000，但这里帮你提炼出核心价值。</p>
-      </div>
-
-      <!-- 课程结构总览 -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">📋 8 节课完整大纲</div>
-        </div>
-        <div class="grid-2">
-          <div>
-            <div class="step-block">
-              <div class="step-num">L1</div>
-              <div class="step-body">
-                <strong>基础原理 &amp; LLM 应用评估生命周期</strong>
-                <p>为什么 Eval 对 LLM 产品不可缺少；LLM 输出的特殊挑战（随机性、上下文依赖）；从开发到生产的全生命周期视角；基础 Instrumentation 和可观测性；Error Analysis 入门。</p>
-              </div>
-            </div>
-            <div class="step-block">
-              <div class="step-num">L2</div>
-              <div class="step-body">
-                <strong>系统性 Error Analysis</strong>
-                <p>合成数据生成（维度采样法）；Open Coding → Axial Coding；定量分析定性数据；Error Analysis 常见陷阱；动手练习：构建 Error 跟踪系统。</p>
-              </div>
-            </div>
-            <div class="step-block">
-              <div class="step-num">L3</div>
-              <div class="step-body">
-                <strong>实现有效的 Evaluations</strong>
-                <p>代码型 Eval 和 LLM Judge 两种方式；单输出 vs 系统级评估；数据集组织（输入 + 参考数据）；动手练习：构建自动化 Eval Pipeline。</p>
-              </div>
-            </div>
-            <div class="step-block">
-              <div class="step-num">L4</div>
-              <div class="step-body">
-                <strong>协作式 Eval 实践</strong>
-                <p>团队协作的 Eval 工作流；Inter-annotator agreement 统计方法（Cohen's Kappa）；共识构建技术；动手练习：小组对齐评估标准。</p>
-              </div>
-            </div>
+      <!-- 课程概览 -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:24px;">
+        <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;">
+          <div style="flex:1;min-width:300px;">
+            <div style="font-size:14px;font-weight:700;margin-bottom:8px;">📌 关于这门课</div>
+            <p style="font-size:13px;color:var(--text2);line-height:1.7;margin:0;">Maven 平台评分最高的 AI 课程之一。由帮助 30+ 公司落地 Eval 的 Hamel Husain 和 Shreya Shankar 主讲（Google、GitHub、Hugging Face 背景）。课程售价 $3000，本页帮你提炼核心价值。</p>
           </div>
-          <div>
-            <div class="step-block">
-              <div class="step-num">L5</div>
-              <div class="step-body">
-                <strong>架构专项评估策略</strong>
-                <p>RAG 系统评估（检索相关性 + 事实准确性）；多步骤 Pipeline 测试；Tool Use 和多轮对话质量评估；多模态评估；动手练习：为不同架构构建测试套件。</p>
-              </div>
-            </div>
-            <div class="step-block">
-              <div class="step-num">L6</div>
-              <div class="step-body">
-                <strong>生产监控 &amp; 持续评估</strong>
-                <p>Traces、Spans、Session Tracking；CI/CD Pipeline 中的自动化 Eval Gate；实验间一致性对比；Safety 和质量控制 Guardrails；动手练习：设计监控 Dashboard。</p>
-              </div>
-            </div>
-            <div class="step-block">
-              <div class="step-num">L7</div>
-              <div class="step-body">
-                <strong>高效的持续人工审核系统</strong>
-                <p>最大化审核 ROI 的采样策略；自定义审核界面设计（提效 10x）；动手练习：实现持续 Feedback 收集系统。</p>
-              </div>
-            </div>
-            <div class="step-block">
-              <div class="step-num">L8</div>
-              <div class="step-body">
-                <strong>成本优化</strong>
-                <p>量化 LLM 产品的价值 vs 成本；基于查询复杂度的智能模型路由（Model Cascade）；Prompt 缓存优化（缓存命中率 ~90% 折扣）；动手练习：优化真实应用的成本效率。</p>
-              </div>
-            </div>
+          <div style="display:flex;gap:16px;flex-shrink:0;">
+            <div style="text-align:center;"><div style="font-size:20px;font-weight:800;color:var(--accent);">4.8/5</div><div style="font-size:10px;color:var(--text3);">评分</div></div>
+            <div style="text-align:center;"><div style="font-size:20px;font-weight:800;color:var(--green);">700+</div><div style="font-size:10px;color:var(--text3);">学员</div></div>
+            <div style="text-align:center;"><div style="font-size:20px;font-weight:800;color:var(--yellow);">4 周</div><div style="font-size:10px;color:var(--text3);">8 节课</div></div>
           </div>
         </div>
       </div>
 
-      <!-- 三个海湾 详细 -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">🌊 三个海湾模型（Three Gulfs）— 课程核心框架</div>
-        </div>
-        <p style="margin-bottom:1rem;">这是整门课的核心诊断框架，用来回答"我的 AI 系统为什么出问题？"三个 Gulf 分别对应三类根本性挑战。</p>
-        <div class="grid-2">
-          <div class="card" style="border-color:var(--blue);">
-            <div class="card-header"><div class="card-title" style="color:var(--blue);">理解的海湾（Gulf of Comprehension）</div></div>
-            <p><strong>开发者 ↔ 数据之间</strong></p>
-            <p style="margin-top:0.5rem;">你对数据的理解总是不完整的：真实用户 Query、系统输出、合成测试用例。你只能建立一个局部模型，永远无法完全掌握系统真正在做什么。</p>
-            <div class="callout callout-warning" style="margin-top:0.75rem;">
-              <div class="callout-title">真实案例</div>
-              <p>Cleric 构建生产事故分析 AI 时，工程师常说"看起来不错，但我不确定是否正确"——这就是 Gulf of Comprehension：没有 Ground Truth，你无法判断输出好坏。</p>
-            </div>
-            <p style="margin-top:0.75rem;"><strong>解法：</strong>系统性 Error Analysis；构建自定义数据查看器；看足够多的 Trace 达到理论饱和。</p>
+      <!-- 8节课大纲 -->
+      <div class="section">
+        <div class="section-title">📋 8 节课完整大纲</div>
+        <table class="data-table">
+          <thead>
+            <tr><th style="width:50px;">课次</th><th style="width:200px;">主题</th><th>核心内容</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="badge badge-level1">L1</span></td><td><strong>基础原理 & 生命周期</strong></td><td>为什么 Eval 不可缺少；LLM 输出的特殊挑战；全生命周期视角；Instrumentation；Error Analysis 入门</td></tr>
+            <tr><td><span class="badge badge-level1">L2</span></td><td><strong>系统性 Error Analysis</strong></td><td>合成数据生成（维度采样法）；Open Coding → Axial Coding；定量分析定性数据；常见陷阱</td></tr>
+            <tr><td><span class="badge badge-level2">L3</span></td><td><strong>实现有效的 Evaluations</strong></td><td>代码型 Eval vs LLM Judge；单输出 vs 系统级评估；数据集组织；构建自动化 Eval Pipeline</td></tr>
+            <tr><td><span class="badge badge-level2">L4</span></td><td><strong>协作式 Eval 实践</strong></td><td>团队协作工作流；Cohen's Kappa 统计方法；共识构建；小组对齐评估标准</td></tr>
+            <tr><td><span class="badge badge-level2">L5</span></td><td><strong>架构专项评估策略</strong></td><td>RAG 评估（检索+事实准确性）；多步骤 Pipeline；Tool Use / 多轮对话；多模态评估</td></tr>
+            <tr><td><span class="badge badge-level3">L6</span></td><td><strong>生产监控 & 持续评估</strong></td><td>Traces/Spans/Session；CI/CD Eval Gate；实验一致性对比；Safety Guardrails</td></tr>
+            <tr><td><span class="badge badge-level3">L7</span></td><td><strong>持续人工审核系统</strong></td><td>最大化审核 ROI 的采样策略；自定义审核界面设计（提效 10x）；Feedback 收集系统</td></tr>
+            <tr><td><span class="badge badge-level3">L8</span></td><td><strong>成本优化</strong></td><td>价值 vs 成本量化；智能模型路由（Model Cascade）；Prompt 缓存优化（~90% 折扣）</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 三个海湾 -->
+      <div class="section">
+        <div class="section-title">🌊 三个海湾模型 — 课程核心诊断框架</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px;">回答"我的 AI 系统为什么出问题？"的三类根本性挑战：</p>
+        <div class="card-grid">
+          <div class="card" style="border-left:3px solid var(--accent);">
+            <div class="card-title" style="color:var(--accent);font-size:13px;">🔵 理解的海湾（Gulf of Comprehension）</div>
+            <div class="card-desc"><strong>开发者 ↔ 数据</strong> — 你对数据的理解总是不完整的。没有 Ground Truth 你无法判断输出好坏。</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);"><strong style="color:var(--text2);">解法：</strong>系统性 Error Analysis → 看足够多 Trace 达到理论饱和</div>
           </div>
-          <div class="card" style="border-color:var(--green);">
-            <div class="card-header"><div class="card-title" style="color:var(--green);">规范的海湾（Gulf of Specification）</div></div>
-            <p><strong>开发者 ↔ LLM Pipeline 之间</strong></p>
-            <p style="margin-top:0.5rem;">你在努力描述自己想要什么，但大量意图是隐性的——只有看到不满意的输出，你才意识到自己其实想要什么。Prompt 永远无法完全捕捉你的真实意图。</p>
-            <div class="callout callout-warning" style="margin-top:0.75rem;">
-              <div class="callout-title">真实案例</div>
-              <p>Sherlock 的 API 错误信息规范失败：只给 AI Agent 返回 "HTTP 422"，不给详细错误字段。Agent 陷入死循环。一旦暴露完整错误描述，Agent 立即修正行为。</p>
-            </div>
-            <p style="margin-top:0.75rem;"><strong>解法：</strong>Pass/Fail + Critique 循环；用具体失败案例改进 Prompt；明确 LLM Agency Level（低/中/高 自主性）。</p>
+          <div class="card" style="border-left:3px solid var(--green);">
+            <div class="card-title" style="color:var(--green);font-size:13px;">🟢 规范的海湾（Gulf of Specification）</div>
+            <div class="card-desc"><strong>开发者 ↔ LLM</strong> — 大量意图是隐性的，只有看到不满意的输出才意识到真正想要什么。Prompt 永远无法完全捕捉意图。</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);"><strong style="color:var(--text2);">解法：</strong>Pass/Fail + Critique 循环 → 用失败案例迭代改进 Prompt</div>
           </div>
-        </div>
-        <div class="card" style="border-color:var(--purple);margin-top:1rem;">
-          <div class="card-header"><div class="card-title" style="color:var(--purple);">泛化的海湾（Gulf of Generalization）</div></div>
-          <p><strong>数据 ↔ LLM Pipeline 之间</strong></p>
-          <p style="margin-top:0.5rem;">即使你把一切都规范清楚了，模型在遇到训练分布之外的数据时仍然会失败。这是模型本身的局限，需要不同的策略——Fine-tuning、任务分解、RAG 改进。</p>
-          <div class="grid-2" style="margin-top:0.75rem;">
-            <div class="callout callout-warning">
-              <div class="callout-title">真实案例 1</div>
-              <p>Discord 的 Clyde 聊天机器人在长对话或创意 Jailbreak（"grandma jailbreak"）时会"出戏"，无法保持一致的人格——这就是泛化失败。需要持续监控 + 安全护栏。</p>
-            </div>
-            <div class="callout callout-info">
-              <div class="callout-title">真实案例 2</div>
-              <p>Cleric 的奇特发现：高级模型在测试环境中会检测到"它在模拟中"（通过 API 响应时间、数据分布等微信号），从而改变行为——这是泛化到了意料之外的环境特征。</p>
-            </div>
+          <div class="card" style="border-left:3px solid var(--accent2);">
+            <div class="card-title" style="color:var(--accent2);font-size:13px;">🟣 泛化的海湾（Gulf of Generalization）</div>
+            <div class="card-desc"><strong>数据 ↔ LLM</strong> — 模型在训练分布之外的数据上失败。这是模型本身的局限。</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);"><strong style="color:var(--text2);">解法：</strong>Fine-tuning、任务分解、RAG 改进、持续监控 + 安全护栏</div>
           </div>
         </div>
       </div>
 
-      <!-- 分析-测量-改进循环 -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">🔄 分析-测量-改进循环（Analyze → Measure → Improve）</div>
-        </div>
-        <p style="margin-bottom:1rem;">课程把所有内容组织在这个三阶段循环里。每个阶段都有经典的反模式需要避开。</p>
+      <!-- 分析-测量-改进 -->
+      <div class="section">
+        <div class="section-title">🔄 分析 → 测量 → 改进 循环</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px;">课程把所有内容组织在这个三阶段循环里，每个阶段都有反模式需要避开。</p>
 
         <div class="tabs">
-          <div class="tab active" onclick="switchTab('course-cycle-tabs', 'course-cycle-analyze', this)">① 分析（Analyze）</div>
-          <div class="tab" onclick="switchTab('course-cycle-tabs', 'course-cycle-measure', this)">② 测量（Measure）</div>
-          <div class="tab" onclick="switchTab('course-cycle-tabs', 'course-cycle-improve', this)">③ 改进（Improve）</div>
+          <div class="tab active" onclick="switchTab(this, 'course-cycle-analyze')">① 分析</div>
+          <div class="tab" onclick="switchTab(this, 'course-cycle-measure')">② 测量</div>
+          <div class="tab" onclick="switchTab(this, 'course-cycle-improve')">③ 改进</div>
         </div>
-        <div id="course-cycle-tabs">
-          <div id="course-cycle-analyze" class="tab-content active">
-            <h4 style="margin-bottom:0.75rem;">目标：定性理解，建立失败分类体系</h4>
-            <p style="margin-bottom:0.75rem;">用 Open Coding → Axial Coding，把模糊的"感觉不对"转化成可命名、可计量的失败类别。核心步骤：</p>
-            <ul class="feature-list" style="margin-bottom:1rem;">
+
+        <div id="course-cycle-analyze" class="tab-content active">
+          <div class="prose">
+            <h3 style="margin-top:0;">目标：定性理解，建立失败分类体系</h3>
+            <p>用 Open Coding → Axial Coding，把模糊的"感觉不对"转化成可命名、可计量的失败类别：</p>
+            <ol>
               <li>准备数据集（真实 Trace 或维度采样合成数据）</li>
               <li>Open Coding：逐条阅读，贴描述性标签</li>
               <li>Axial Coding：把标签聚类成结构化分类</li>
               <li>反复迭代直到理论饱和（新数据没有新类别）</li>
-            </ul>
-            <div class="callout callout-warning">
-              <div class="callout-title">❌ 分析阶段的常见陷阱</div>
-              <ul class="feature-list" style="margin-top:0.5rem;">
-                <li><strong>把标注外包给不懂业务的人</strong> — 技术上正确但业务上失败的回答，只有领域专家能识别</li>
-                <li><strong>看的案例不够多</strong> — 没有达到理论饱和就停止，会遗漏重要失败模式</li>
-                <li><strong>跳过分析阶段</strong> — Shreya 强调：无论公司大小，Error Analysis 永远是必须做的第一步</li>
-              </ul>
+            </ol>
+          </div>
+          <div class="callout callout-warning">
+            <div class="callout-title">❌ 常见陷阱</div>
+            <p>• 把标注外包给不懂业务的人 — 只有领域专家能识别业务上的失败<br>• 看的案例不够多 — 没达到理论饱和就停止<br>• 跳过分析阶段 — 无论公司大小，Error Analysis 永远是第一步</p>
+          </div>
+        </div>
+        <div id="course-cycle-measure" class="tab-content">
+          <div class="prose">
+            <h3 style="margin-top:0;">目标：量化失败频率，为改进提供优先级</h3>
+            <p>两类 Eval 工具：</p>
+          </div>
+          <div class="compare-grid">
+            <div class="compare-card" style="border-top:2px solid var(--green);">
+              <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:8px;">✅ 程序化 Eval（首选）</div>
+              <div class="prose"><p>快、便宜、客观。能用代码检查的不要用 LLM。检查 Tool 调用、正则匹配、Schema 验证、关键词检测。</p></div>
             </div>
-            <div class="callout callout-info" style="margin-top:0.75rem;">
-              <div class="callout-title">💡 维度采样法（Dimensional Sampling）</div>
-              <p>没有真实用户时，用这个方法生成高质量合成数据：①识别有意义的变化维度（用户意图、用户画像、查询复杂度）→ ②在各维度上生成组合 → ③把每个组合转成真实 Query。避免"程序化生成的千篇一律"问题。</p>
+            <div class="compare-card" style="border-top:2px solid var(--accent);">
+              <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px;">🤖 LLM Judge（主观 → 才用）</div>
+              <div class="prose"><p>处理需要推理的判断。用 Train/Dev/Test 切分标注集，Dev 集迭代 Prompt，Test 集计算 TPR/TNR。</p></div>
             </div>
           </div>
-          <div id="course-cycle-measure" class="tab-content">
-            <h4 style="margin-bottom:0.75rem;">目标：量化失败频率，为改进提供优先级依据</h4>
-            <p style="margin-bottom:0.75rem;">两类 Eval 工具，不同场景用不同的：</p>
-            <div class="grid-2" style="margin-bottom:1rem;">
-              <div class="card" style="border-color:var(--green);">
-                <div class="card-header"><div class="card-title" style="color:var(--green);">程序化 Eval（首选）</div></div>
-                <p>快、便宜、客观。能用代码检查的，不要用 LLM。</p>
-                <ul class="feature-list" style="margin-top:0.5rem;">
-                  <li>检查 Tool 是否被调用 → 直接看 tool object 是否有值</li>
-                  <li>正则匹配、Schema 验证、关键词检测</li>
-                  <li>对于 Agent：分别检查各阶段（工具选择、参数生成、执行结果、输出处理）</li>
-                </ul>
-              </div>
-              <div class="card" style="border-color:var(--blue);">
-                <div class="card-header"><div class="card-title" style="color:var(--blue);">LLM Judge（主观/复杂 → 才用）</div></div>
-                <p>处理主观或需要推理的判断，但必须先建立信任。</p>
-                <ul class="feature-list" style="margin-top:0.5rem;">
-                  <li>用 Train/Dev/Test 切分标注数据集（不能泄露！）</li>
-                  <li>用 Dev 集迭代改 Judge Prompt</li>
-                  <li>用 Test 集计算 TPR/TNR（测量 Judge 可靠性）</li>
-                  <li>用 <code>judgy</code> 库做 Bias Correction</li>
-                </ul>
-              </div>
-            </div>
-            <div class="callout callout-warning">
-              <div class="callout-title">❌ 测量阶段的常见陷阱</div>
-              <ul class="feature-list" style="margin-top:0.5rem;">
-                <li><strong>LLM Judge 没有对齐人工判断</strong> — 没有人工数据作锚点的 Judge 是放大噪音</li>
-                <li><strong>数据泄露</strong> — 把失败 Trace 放进 Judge Prompt，再用这些 Trace 测试 → 自我实现预言</li>
-                <li><strong>TNR 低 = 虚假信心</strong>，TPR 低 = 低估系统能力；两个都要测量</li>
-              </ul>
-            </div>
+          <div class="callout callout-warning">
+            <div class="callout-title">❌ 常见陷阱</div>
+            <p>• Judge 没对齐人工 — 没有锚点的 Judge 在放大噪音<br>• 数据泄露 — 失败 Trace 放进 Judge Prompt 再测试 = 自我实现<br>• TNR 低 = 虚假信心，TPR 低 = 低估能力；两个都要测</p>
           </div>
-          <div id="course-cycle-improve" class="tab-content">
-            <h4 style="margin-bottom:0.75rem;">目标：做最小干预，解决真实的、已被量化的问题</h4>
-            <p style="margin-bottom:0.75rem;">改进策略应该按成本从低到高尝试，不要一上来就上大招：</p>
-            <div class="step-block">
-              <div class="step-num">低</div>
+        </div>
+        <div id="course-cycle-improve" class="tab-content">
+          <div class="prose">
+            <h3 style="margin-top:0;">目标：最小干预，解决已被量化的问题</h3>
+            <p>按成本从低到高尝试：</p>
+          </div>
+          <div class="steps">
+            <div class="step">
+              <div class="step-num" style="background:rgba(16,185,129,0.15);color:var(--green);border-color:var(--green);">低</div>
               <div class="step-body">
-                <strong>Prompt 工程</strong>
-                <p>大多数情况下，改 Prompt 就足够了。结构化提示：静态内容放前面（最大化缓存命中，省约 90% Token 成本），动态内容放后面。批量请求额外省 50%。</p>
+                <div class="step-title">Prompt 工程</div>
+                <div class="step-desc">大多数情况够用。静态内容放前面（缓存省 ~90%），动态放后面。批量再省 50%。</div>
               </div>
             </div>
-            <div class="step-block">
-              <div class="step-num">中</div>
+            <div class="step">
+              <div class="step-num" style="background:rgba(245,158,11,0.15);color:var(--yellow);border-color:var(--yellow);">中</div>
               <div class="step-body">
-                <strong>架构调整</strong>
-                <p>任务分解（把一个复杂 LLM 调用拆成多个聚焦的步骤）、修复 Tool 描述、改进检索策略（RAG）。</p>
+                <div class="step-title">架构调整</div>
+                <div class="step-desc">任务分解（复杂调用拆成聚焦步骤）、修复 Tool 描述、改进 RAG 检索策略。</div>
               </div>
             </div>
-            <div class="step-block">
-              <div class="step-num">高</div>
+            <div class="step">
+              <div class="step-num" style="background:rgba(239,68,68,0.15);color:var(--red);border-color:var(--red);">高</div>
               <div class="step-body">
-                <strong>Fine-tuning 和 Model Cascade</strong>
-                <p>Model Cascade：基于查询复杂度在便宜模型和贵模型之间路由。前提是置信度 ↔ 正确性之间有足够相关性（生成式任务未必成立）。Fine-tuning 是最后手段，先确认是 Gulf of Generalization 问题再考虑。</p>
+                <div class="step-title">Fine-tuning & Model Cascade</div>
+                <div class="step-desc">最后手段。Model Cascade 按复杂度路由；Fine-tuning 只在确认 Gulf of Generalization 时考虑。</div>
               </div>
-            </div>
-            <div class="callout callout-warning" style="margin-top:0.75rem;">
-              <div class="callout-title">❌ 改进阶段的常见陷阱</div>
-              <ul class="feature-list" style="margin-top:0.5rem;">
-                <li><strong>跳过分析和测量，直接改进</strong> — 最常见的浪费时间方式</li>
-                <li><strong>直接跳到 Fine-tuning</strong> — 80% 的情况下 Prompt 工程就够了，但很多人"听说过 Fine-tuning"就想直接上</li>
-              </ul>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 真实公司案例 -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">🏢 真实公司 Eval 案例精选</div>
-        </div>
-        <p style="margin-bottom:1rem;">以下案例来自 ZenML 的 LLMOps 数据库，涵盖 800+ 真实 AI 落地案例，与课程框架深度对应。</p>
-
+      <!-- 真实案例 -->
+      <div class="section">
+        <div class="section-title">🏢 真实公司 Eval 案例</div>
         <div class="tabs">
-          <div class="tab active" onclick="switchTab('course-cases-tabs', 'course-cases-anaconda', this)">Anaconda</div>
-          <div class="tab" onclick="switchTab('course-cases-tabs', 'course-cases-coursera', this)">Coursera</div>
-          <div class="tab" onclick="switchTab('course-cases-tabs', 'course-cases-canva', this)">Canva</div>
-          <div class="tab" onclick="switchTab('course-cases-tabs', 'course-cases-slack', this)">SumUp</div>
+          <div class="tab active" onclick="switchTab(this, 'course-cases-anaconda')">Anaconda</div>
+          <div class="tab" onclick="switchTab(this, 'course-cases-coursera')">Coursera</div>
+          <div class="tab" onclick="switchTab(this, 'course-cases-canva')">Canva</div>
+          <div class="tab" onclick="switchTab(this, 'course-cases-slack')">SumUp</div>
         </div>
-        <div id="course-cases-tabs">
-          <div id="course-cases-anaconda" class="tab-content active">
-            <h4 style="margin-bottom:0.5rem;">Anaconda：从 0% 到 100%，用 Eval 驱动开发</h4>
-            <p>AI 编码助手初始成功率：<strong>0-13%</strong>。通过 Evaluations Driven Development (EDD) 方法论：</p>
-            <ul class="feature-list" style="margin-top:0.75rem;">
-              <li>构建 <code>llm-eval</code> 框架，自动执行数千个生成的代码方案并测试</li>
-              <li>Few-shot 学习（精心挑选的真实 Python 错误）</li>
-              <li>Chain-of-Thought 提示（逐步推理）</li>
-              <li>"Agentic Feedback Iteration"：用 LLM 分析 Eval 结果并建议 Prompt 改进</li>
-            </ul>
-            <p style="margin-top:0.75rem;">结果：Mistral 7B 在特定任务上从 <strong>0% → 100%</strong> 成功率。</p>
-            <div class="callout callout-success" style="margin-top:0.75rem;">
-              <div class="callout-title">课程框架对应</div>
-              <p>没有自动化 Eval，这些 Prompt 技术的效果根本无从比较。Eval 是能"看见"改进的前提——这正是 Analyze → Measure → Improve 循环的意义。</p>
-            </div>
+        <div id="course-cases-anaconda" class="tab-content active">
+          <div class="prose">
+            <h3 style="margin-top:0;">Anaconda：从 0% 到 100%，用 Eval 驱动开发</h3>
+            <p>AI 编码助手初始成功率 <strong>0-13%</strong>。通过 EDD 方法论：构建 <code>llm-eval</code> 框架自动执行代码 + Few-shot + CoT + Agentic Feedback Iteration。</p>
+            <p>结果：Mistral 7B 特定任务从 <strong>0% → 100%</strong> 成功率。</p>
           </div>
-          <div id="course-cases-coursera" class="tab-content">
-            <h4 style="margin-bottom:0.5rem;">Coursera：系统性 AI 评估框架 → 直接业务结果</h4>
-            <p>评估 AI Coach 聊天机器人 + 自动评分系统，四步框架：</p>
-            <ul class="feature-list" style="margin-top:0.75rem;">
-              <li>① 提前定义成功标准（上线前，不是上线后）</li>
-              <li>② 混合数据集（真实匿名 Transcript + LLM 生成边界用例）</li>
-              <li>③ 双层评估：启发式检查 + LLM Judge</li>
-              <li>④ 持续生产监控</li>
-            </ul>
-            <p style="margin-top:0.75rem;"><strong>关键发现：</strong>早期原型对"模糊答案"太宽松——只有系统性负面测试才能发现这个问题。</p>
-            <div class="callout callout-success" style="margin-top:0.75rem;">
-              <div class="callout-title">业务结果</div>
-              <p>聊天机器人学员满意度 90%；自动评分使课程完成率提升 16.7%；评分时间从数小时缩短到 1 分钟以内。</p>
-            </div>
+          <div class="callout callout-success">
+            <div class="callout-title">课程框架对应</div>
+            <p>没有自动化 Eval，Prompt 技术的效果无从比较。Eval 是"看见改进"的前提。</p>
           </div>
-          <div id="course-cases-canva" class="tab-content">
-            <h4 style="margin-bottom:0.5rem;">Canva Magic Switch：Eval 先行，实现后行</h4>
-            <p>完全颠覆传统开发流程：<strong>先定义 Eval 标准，再开始实现。</strong></p>
-            <ul class="feature-list" style="margin-top:0.75rem;">
-              <li>5 个评估维度：信息保留、意图对齐、语义顺序、语气适当性、格式一致性（均归一化到 0-1）</li>
-              <li>消融实验（Ablation Studies）：故意降低输出质量来验证 LLM Evaluator 能否可靠检测差异</li>
-              <li>用 Eval 作为 Prompt 变更的回归测试</li>
-            </ul>
-            <div class="callout callout-success" style="margin-top:0.75rem;">
-              <div class="callout-title">课程框架对应</div>
-              <p>"用 Eval 做 Prompt 变更的回归测试"——这正是 Q2 的核心答案。Canva 证明了这个方法在真实产品中可行且有效。</p>
-            </div>
+        </div>
+        <div id="course-cases-coursera" class="tab-content">
+          <div class="prose">
+            <h3 style="margin-top:0;">Coursera：系统性评估框架 → 直接业务结果</h3>
+            <p>四步框架：① 提前定义成功标准 → ② 混合数据集 → ③ 双层评估（启发式+LLM Judge）→ ④ 持续生产监控。</p>
+            <p><strong>结果：</strong>满意度 90%；课程完成率 +16.7%；评分时间从数小时→1 分钟。</p>
           </div>
-          <div id="course-cases-slack" class="tab-content">
-            <h4 style="margin-bottom:0.5rem;">SumUp：为主观、合规敏感的文本生成建立 Eval 体系</h4>
-            <p>场景：为反洗钱（AML）叙述性报告自动生成。挑战极其艰巨：</p>
-            <ul class="feature-list" style="margin-top:0.75rem;">
-              <li>ROUGE 等通用 NLP 指标完全无效（自由格式合规报告）</li>
-              <li>自建 LLM 评估系统，4 个自定义指标：准确性、合规对齐、相关性、排除标准</li>
-              <li>偏见缓解：Position Swapping + Few-shot Calibration</li>
-              <li>核心验证：自动化评估与人工审核员判断的强相关性</li>
-            </ul>
-            <div class="callout callout-success" style="margin-top:0.75rem;">
-              <div class="callout-title">关键洞见</div>
-              <p>"精确测量是评估、迭代和改进模型的关键。"——Eval 不只是有帮助，有时是让高风险场景能够上生产的<strong>唯一使能技术</strong>。</p>
-            </div>
+        </div>
+        <div id="course-cases-canva" class="tab-content">
+          <div class="prose">
+            <h3 style="margin-top:0;">Canva Magic Switch：Eval 先行，实现后行</h3>
+            <p>完全颠覆传统：<strong>先定义 5 个评估维度</strong>（信息保留、意图对齐、语义顺序、语气适当性、格式一致性），再开始实现。用消融实验验证 Evaluator 可靠性，用 Eval 做 Prompt 回归测试。</p>
+          </div>
+        </div>
+        <div id="course-cases-slack" class="tab-content">
+          <div class="prose">
+            <h3 style="margin-top:0;">SumUp：合规敏感文本生成的 Eval 体系</h3>
+            <p>反洗钱报告自动生成。ROUGE 完全无效 → 自建 4 个自定义指标 + Position Swapping 偏见缓解 → 自动评估与人工强相关。</p>
+          </div>
+          <div class="callout callout-success">
+            <div class="callout-title">关键洞见</div>
+            <p>Eval 有时是让高风险场景能上生产的<strong>唯一使能技术</strong>。</p>
           </div>
         </div>
       </div>
 
       <!-- 高级技巧 -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">🔬 课程深处的高级技巧</div>
-        </div>
-        <div class="grid-2">
-          <div>
-            <h4 style="margin-bottom:0.5rem; color:var(--blue);">自定义审核界面 → 10x 效率提升</h4>
-            <p>课程花了整整一节课（L7）讲这个。核心论点：通用工具（电子表格、通用日志查看器）无法展示你业务最关键的上下文信息。</p>
-            <ul class="feature-list" style="margin-top:0.5rem;">
-              <li>自定义界面：200 条/小时 vs 电子表格 20 条/小时（10x）</li>
-              <li>应用 Nielsen 可用性启发：进度条激励完成；Pass/Fail 单键操作；预置失败模式选项（减少认知负担）；允许"延迟"避免卡住</li>
-              <li>1-2 天内用 Streamlit 或 FastHTML 自己搭一个</li>
-            </ul>
-
-            <h4 style="margin-bottom:0.5rem; margin-top:1rem; color:var(--purple);">Transition Failure Matrix（Agent 系统）</h4>
-            <p>对于多步骤 Agent 系统，用状态转移失败矩阵找调试优先级：哪个状态转移失败率最高？那就是优先修的地方。</p>
+      <div class="section">
+        <div class="section-title">🔬 高级技巧精选</div>
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-icon" style="font-size:18px;">🖥️</div>
+            <div class="card-title">自定义审核界面 → 10x 效率</div>
+            <div class="card-desc">通用工具无法展示业务上下文。自定义界面 200 条/h vs 电子表格 20 条/h。用 Streamlit 1-2 天搭一个。</div>
           </div>
-          <div>
-            <h4 style="margin-bottom:0.5rem; color:var(--green);">评估的分层抽样策略</h4>
-            <p>每周目标：约 100 条 Trace。三种采样混合：</p>
-            <ul class="feature-list" style="margin-top:0.5rem;">
-              <li><strong>随机采样</strong>：整体健康检查</li>
-              <li><strong>不确定性采样</strong>：LLM Judge 置信度低的用例（最有学习价值）</li>
-              <li><strong>失败驱动采样</strong>：违规、Bug、用户投诉触发的用例</li>
-            </ul>
-
-            <h4 style="margin-bottom:0.5rem; margin-top:1rem; color:var(--red);">评估条件漂移（Evaluation Criteria Drift）</h4>
-            <p>标注过程中，你对失败模式的理解会演变。标注结束时的你和开始时的你，看数据的眼光已经不同了——这意味着你必须回去重新标注早期数据，直到标准真正一致。这是正常的，不是 Bug。</p>
-
-            <h4 style="margin-bottom:0.5rem; margin-top:1rem; color:var(--yellow);">LLM Agency Levels</h4>
-            <p>必须在 Prompt 里明确指定 LLM 的自主程度：<strong>高自主</strong>（主动重新解读用户意图）/ <strong>中等</strong>（提出澄清问题）/ <strong>低自主</strong>（字面执行用户请求）。不同产品场景对应不同选择，影响用户如何与系统交互。</p>
+          <div class="card">
+            <div class="card-icon" style="font-size:18px;">📊</div>
+            <div class="card-title">分层抽样策略</div>
+            <div class="card-desc">每周 ~100 条 Trace，三种采样混合：随机（健康检查）+ 不确定性（Judge 低置信度）+ 失败驱动（投诉/Bug）。</div>
+          </div>
+          <div class="card">
+            <div class="card-icon" style="font-size:18px;">🔄</div>
+            <div class="card-title">评估条件漂移</div>
+            <div class="card-desc">标注过程中你的标准会演变。结束时需回头重标早期数据直到一致——这是正常的，不是 Bug。</div>
+          </div>
+          <div class="card">
+            <div class="card-icon" style="font-size:18px;">🎚️</div>
+            <div class="card-title">LLM Agency Levels</div>
+            <div class="card-desc">必须在 Prompt 中明确自主度：高（主动解读）/ 中（提问澄清）/ 低（字面执行）。影响用户交互方式。</div>
+          </div>
+          <div class="card">
+            <div class="card-icon" style="font-size:18px;">📐</div>
+            <div class="card-title">Transition Failure Matrix</div>
+            <div class="card-desc">多步 Agent 系统：用状态转移失败矩阵定位调试优先级——失败率最高的转移先修。</div>
           </div>
         </div>
       </div>
 
       <!-- 特邀嘉宾 -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">🎤 特邀嘉宾讲座（精选内容）</div>
-        </div>
-        <div class="grid-2">
-          <div class="step-block" style="grid-column: span 1;">
-            <div class="step-num">👩</div>
-            <div class="step-body">
-              <strong>Teresa Torres（Product Talk）</strong>
-              <p>作为 PM，4 周内从零到 5 个自动化 Eval。核心经验：PM 可以，也应该拥有 Eval 能力——它让产品决策从"感觉对"变成"数据说"。</p>
-            </div>
-          </div>
-          <div class="step-block" style="grid-column: span 1;">
-            <div class="step-num">🔬</div>
-            <div class="step-body">
-              <strong>Leonard Tang（Haize Labs）</strong>
-              <p>用推理时计算扩展提升 LLM Judge 质量。更好的 Judge 不只靠更大的模型，也可以靠让模型思考更多时间。</p>
-            </div>
-          </div>
-          <div class="step-block" style="grid-column: span 1;">
-            <div class="step-num">🛡️</div>
-            <div class="step-body">
-              <strong>Udi Menkes（Intuit PM）</strong>
-              <p>构建可信 AI Agent 的 Playbook：如何在多步骤自主决策中保持人类可信度和可控性。</p>
-            </div>
-          </div>
-          <div class="step-block" style="grid-column: span 1;">
-            <div class="step-num">🔍</div>
-            <div class="step-body">
-              <strong>Skylar Payne</strong>
-              <p>避免 RAG 评估中的常见陷阱：检索和生成分开评估；Recall@K 和 NDCG 的正确用法；为什么端到端测试不够。</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="callout callout-info" style="margin-top:1rem;">
-          <div class="callout-title">🛠️ 工具赛道（可选）</div>
-          <p>课程专门开设了工具商 Workshop 环节（<strong>不强制</strong>），让主流 Eval 工具商演示真实用法：</p>
-          <ul class="feature-list" style="margin-top:0.5rem;">
-            <li><strong>Harrison Chase（LangChain CEO）</strong> → LangSmith</li>
-            <li><strong>Mikyo King &amp; Isaac Flath（Arize）</strong> → Phoenix</li>
-            <li><strong>Wayde Gilliam</strong> → Braintrust</li>
-          </ul>
-          <p style="margin-top:0.5rem;">Hamel 的立场：这些工具是可选的，工具选择应该由你具体需求驱动，不应该是起点。</p>
+      <div class="section">
+        <div class="section-title">🎤 特邀嘉宾精选</div>
+        <table class="data-table">
+          <thead><tr><th>嘉宾</th><th>核心贡献</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Teresa Torres</strong><br><span style="font-size:11px;color:var(--text3);">Product Talk</span></td><td>PM 如何在 4 周内从零到 5 个自动化 Eval — 产品决策从"感觉对"变"数据说"</td></tr>
+            <tr><td><strong>Leonard Tang</strong><br><span style="font-size:11px;color:var(--text3);">Haize Labs</span></td><td>推理时计算扩展提升 Judge 质量 — 更好的 Judge 不只靠更大模型，也靠更多思考时间</td></tr>
+            <tr><td><strong>Udi Menkes</strong><br><span style="font-size:11px;color:var(--text3);">Intuit PM</span></td><td>可信 AI Agent Playbook — 多步骤自主决策中保持人类可信度和可控性</td></tr>
+            <tr><td><strong>Skylar Payne</strong></td><td>RAG 评估陷阱 — 检索和生成分开评估；Recall@K 和 NDCG 的正确用法</td></tr>
+          </tbody>
+        </table>
+        <div class="callout callout-info" style="margin-top:12px;">
+          <div class="callout-title">🛠️ 工具 Workshop（可选）</div>
+          <p>Harrison Chase → LangSmith · Mikyo King → Phoenix · Wayde Gilliam → Braintrust。Hamel 立场：工具选择由需求驱动，不是起点。</p>
         </div>
       </div>
 
-      <!-- 学员评价精选 -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">💬 学员真实反馈（未经修饰）</div>
-        </div>
-        <div class="grid-2">
-          <div class="callout callout-success">
+      <!-- 学员评价 -->
+      <div class="section">
+        <div class="section-title">💬 学员反馈</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="callout callout-success" style="margin:0;">
             <div class="callout-title">Hugo · 数据科学家</div>
-            <p>"这门课从根本上改变了我做 Evals 的方式，重塑了我的咨询方式、教学方式，以及对构建真正有效的 AI 系统的思考方式。Shreya 和 Hamel 是 Evals 界的 Michael Jordan 🏀"</p>
+            <p>"这门课从根本上改变了我做 Evals 的方式。Shreya 和 Hamel 是 Evals 界的 Michael Jordan 🏀"</p>
           </div>
-          <div class="callout callout-success">
+          <div class="callout callout-success" style="margin:0;">
             <div class="callout-title">Stefano · 创始人</div>
-            <p>"'Understanding before tooling' 的理念深深打动了我。课程指导你从电子表格到 Streamlit 应用，构建真正适合你产品的工具。这是我最喜欢的在线课程之一，没有之一。"</p>
+            <p>"'Understanding before tooling' 的理念深深打动了我。这是我最喜欢的在线课程之一，没有之一。"</p>
           </div>
-          <div class="callout callout-info">
+          <div class="callout callout-info" style="margin:0;">
             <div class="callout-title">Zara · OpenAI GTM</div>
-            <p>"这是我上过的最实用的 AI 课程之一。它教你如何系统性地、可扩展地测量你的 AI 产品是否真的有效。Evals 帮你比较模型、发现失败模式、改善特定领域的性能——强烈推荐！"</p>
+            <p>"最实用的 AI 课程之一——教你系统性地测量 AI 产品是否真的有效。"</p>
           </div>
-          <div class="callout callout-info">
-            <div class="callout-title">Jacob Carter · CEO, NurtureBoss</div>
-            <p>"通过 Hamel 的方法，我们在关键领域（如日期处理）的错误率降低了超过 60%。这些方法已经成为我们构建和改进 AI 产品的基本流程，形成了持续改进的循环。"</p>
+          <div class="callout callout-info" style="margin:0;">
+            <div class="callout-title">Jacob Carter · CEO</div>
+            <p>"关键领域错误率降低超 60%。这些方法已成为我们 AI 产品的基本流程。"</p>
           </div>
         </div>
-        <div class="callout callout-warning" style="margin-top:1rem;">
-          <div class="callout-title">Simon Willison（Datasette 创始人）</div>
-          <p>"Hamel 提供了我一直需要的 Evals 教程，附带非常详尽的案例研究……Hamel 的内容非常出色，但有点荒谬的是，他一个人在单枪匹马地弥补我们整个行业在这个话题上的内容空白！"</p>
+        <div class="callout callout-warning" style="margin-top:12px;">
+          <div class="callout-title">Simon Willison · Datasette 创始人</div>
+          <p>"Hamel 一个人在单枪匹马地弥补整个行业在 Evals 话题上的内容空白！"</p>
         </div>
       </div>
 
